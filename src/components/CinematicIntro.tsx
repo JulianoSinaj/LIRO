@@ -138,29 +138,38 @@ export function CinematicIntro({ src, children }: { src: string; children: React
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-[100] h-full w-full touch-none overflow-hidden overscroll-none intro-overlay"
           >
-            {/* Video e zakonshme (jo motion): është e dukshme që nga HTML-ja e serverit,
-                me një zbehje CSS që s'varet nga JavaScript-i.
-                Kornizimi sipas raportit të ekranit është te `.intro-video` në globals.css. */}
-            <video
-              ref={videoRef}
-              src={src}
-              autoPlay
-              muted
-              playsInline
-              preload="auto"
-              disablePictureInPicture
-              disableRemotePlayback
+            {/* Korniza: në desktop mbush ekranin; në celular/tablet vertikal është kuti
+                16:9 me skaje të maskuara (shih `.intro-frame` në globals.css). */}
+            <div className="intro-frame pointer-events-none">
+              {/* Video e zakonshme (jo motion): është e dukshme që nga HTML-ja e serverit,
+                  me një zbehje CSS që s'varet nga JavaScript-i. */}
+              <video
+                ref={videoRef}
+                src={src}
+                autoPlay
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+                disableRemotePlayback
+                aria-hidden="true"
+                tabIndex={-1}
+                onEnded={dismiss}
+                onError={dismiss}
+                className="intro-video animate-intro-in"
+              />
+            </div>
+
+            {/* Vinjetë radiale mbi gjithë ekranin (vetëm celular/tablet) */}
+            <div
               aria-hidden="true"
-              tabIndex={-1}
-              onEnded={dismiss}
-              onError={dismiss}
-              className="intro-video animate-intro-in pointer-events-none"
+              className="intro-vignette pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,var(--color-intro)_95%)]"
             />
 
             {/* Vinjetë e lehtë poshtë, që butoni të lexohet mbi çdo kuadër */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-black/60 to-transparent sm:h-48"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-intro/70 to-transparent sm:h-48"
             />
 
             <motion.button

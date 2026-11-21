@@ -14,6 +14,7 @@
   --color-amber: #d48c46; /* shkëlqimi atmosferik (LED mbi tulla) */
   --color-ivory: #f7f3eb; /* teksti kryesor */
   --color-muted: #a89f94; /* Warm Stone — teksti sekondar */
+  --color-intro: #14100a; /* toni i skajeve të videos intro */
 
   --animate-dialog-in: dialog-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-scroll-line: scroll-line 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
@@ -215,11 +216,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /*  Intro kinematik (video 16:9 me logon në qendër)                            */
 /* -------------------------------------------------------------------------- */
 @layer components {
+  /* Sfondi = toni i skajeve të videos (pas filtrit brightness/contrast), që kufijtë
+     të shkrihen pa vija. */
   .intro-overlay {
-    background-color: #000;
+    background-color: var(--color-intro);
   }
 
-  /* Parazgjedhja (desktop, tablet horizontal ≈ 3:2 – 17:9): mbush ekranin. */
+  /* Korniza e videos. Parazgjedhja (desktop, tablet horizontal ≈ 3:2 – 17:9):
+     mbush gjithë ekranin. */
+  .intro-frame {
+    position: absolute;
+    inset: 0;
+  }
+
   .intro-video {
     position: absolute;
     inset: 0;
@@ -227,40 +236,70 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     height: 100%;
     object-fit: cover;
     object-position: center;
+    /* Zbut pak shkëlqimin e arit — më i ngrohtë, më i qetë për syrin. */
+    filter: brightness(0.95) contrast(0.95);
   }
 
-  /* Vertikal / gati katror (celular, tablet vertikal): shirit 16:9 i zmadhuar 1.2×
-     (pret ~8% anash, logoja mbetet e plotë), skajet sipër/poshtë zbehen në sfond. */
+  /* Vinjeta radiale përdoret vetëm në kornizën "kuti" më poshtë. */
+  .intro-vignette {
+    display: none;
+  }
+
+  /* Vertikal / gati katror (celular, tablet vertikal): kuti 16:9 (w-full max-w-4xl)
+     në qendër, me maskë të formësuar sipas logos.
+
+     Logoja (e matur në çdo kuadër) ka formë kupole: në 35% e sipërme ka vetëm
+     avullin në qendër (x 43–57%), kupola është në y 35–65% (x 31–68%), teksti
+     në y 65–88% (x 11–88%). Videoja zvogëlohet: avulli nis te 3% → mbaron te 14%.
+     Drita e dritares në të majtë prek skajin e sipërm → aty duhet zbehje e gjatë.
+
+     Maska = R ∩ B ∩ T ∩ (S1 ∪ S2):
+       R  — radiale: zbeh qoshet;
+       B  — poshtë: zbehje e shkurtër (teksti zbret deri në 88%);
+       T  — sipër: zbehje shumë e shkurtër për të gjithë gjerësinë (avulli te 3%);
+       S1 — sipër, anash: zbehje e gjatë deri në 55% (fshin vijën e dritës);
+       S2 — elips që mbron avullin dhe kupolën në qendër nga S1.
+     mask-composite zbatohet nga shtresa e fundit drejt së parës. */
   @media (max-aspect-ratio: 3/2) {
-    .intro-overlay {
-      background-color: #161108; /* ngjyra e skajeve të videos */
-    }
-    .intro-video {
+    .intro-frame {
       inset: auto;
       top: 50%;
       left: 50%;
-      width: 120%;
-      height: auto;
+      width: 100%;
+      max-width: 56rem; /* max-w-4xl */
       aspect-ratio: 16 / 9;
       translate: -50% -50%;
-      mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+      -webkit-mask-image:
+        radial-gradient(ellipse at center, #000 70%, transparent 100%),
+        linear-gradient(to top, transparent, #000 9%),
+        linear-gradient(to bottom, transparent, #000 3%),
+        linear-gradient(to bottom, transparent, #000 55%),
+        radial-gradient(26% 75% at 50% 60%, #000 80%, transparent 100%);
+      mask-image:
+        radial-gradient(ellipse at center, #000 70%, transparent 100%),
+        linear-gradient(to top, transparent, #000 9%),
+        linear-gradient(to bottom, transparent, #000 3%),
+        linear-gradient(to bottom, transparent, #000 55%),
+        radial-gradient(26% 75% at 50% 60%, #000 80%, transparent 100%);
+      -webkit-mask-composite: source-in, source-in, source-in, source-over, source-over;
+      mask-composite: intersect, intersect, intersect, add, add;
+    }
+    .intro-vignette {
+      display: block;
     }
   }
 
   /* Shumë i gjerë (celular horizontal, monitor ultrawide): video e plotë,
      skajet majtas/djathtas zbehen — përndryshe pritet avulli dhe teksti i logos. */
   @media (min-aspect-ratio: 17/9) {
-    .intro-overlay {
-      background-color: #161108;
-    }
-    .intro-video {
+    .intro-frame {
       inset: auto;
       top: 0;
       left: 50%;
-      width: auto;
       height: 100%;
       aspect-ratio: 16 / 9;
       translate: -50% 0;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
       mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
     }
   }
