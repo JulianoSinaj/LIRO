@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Mrs_Saint_Delafield, Plus_Jakarta_Sans } from "next/font/google";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { INTRO_STORAGE_KEY } from "@/lib/intro";
 import "./globals.css";
 
 /* Titujt — serif editorial (400–600 + italic) */
@@ -46,13 +47,26 @@ export const viewport: Viewport = {
   themeColor: "#0B0908",
 };
 
+/**
+ * Ekzekutohet para pikturimit të parë: nëse intro është luajtur në këtë sesion,
+ * shënon <html> që CSS ta fshehë overlay-in menjëherë (pa "flash" të zi).
+ */
+const introGateScript = `try{if(sessionStorage.getItem(${JSON.stringify(INTRO_STORAGE_KEY)})==="1")document.documentElement.setAttribute("data-intro-played","")}catch(e){}`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="sq"
       data-scroll-behavior="smooth"
       className={`${cormorant.variable} ${jakarta.variable} ${signature.variable} antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introGateScript }} />
+        <noscript>
+          <style>{"[data-cinematic-intro]{display:none!important}"}</style>
+        </noscript>
+      </head>
       <body className="grain min-h-full bg-ink font-sans text-ivory">
         <LanguageProvider>
           <MotionProvider>{children}</MotionProvider>

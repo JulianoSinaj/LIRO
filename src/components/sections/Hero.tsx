@@ -6,6 +6,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { Star } from "lucide-react";
 import { content, images } from "@/data/restaurantData";
 import { EASE_LUXE } from "@/lib/motion";
+import { useIntroRevealed } from "../CinematicIntro";
 import { useLanguage } from "../LanguageProvider";
 import { parseAccent, plainText } from "../ui/AccentText";
 import { ButtonLink } from "../ui/Button";
@@ -16,6 +17,7 @@ import { Eyebrow } from "../ui/SectionHeading";
  * Fjalët e theksuara (*Fine Dining*) mbahen bashkë në të njëjtin rresht.
  */
 function AnimatedTitle({ text, delay = 0.35 }: { text: string; delay?: number }) {
+  const revealed = useIntroRevealed();
   let index = 0;
   const groups = parseAccent(text)
     .map((part) => ({
@@ -36,7 +38,7 @@ function AnimatedTitle({ text, delay = 0.35 }: { text: string; delay?: number })
       <motion.span
         className={accent ? "inline-block font-serif italic text-gold-soft" : "inline-block"}
         initial={{ y: "110%", opacity: 0 }}
-        animate={{ y: "0%", opacity: 1 }}
+        animate={revealed ? { y: "0%", opacity: 1 } : undefined}
         transition={{ duration: 1.1, delay: delay + i * 0.07, ease: EASE_LUXE }}
       >
         {word}
@@ -75,9 +77,10 @@ function AnimatedTitle({ text, delay = 0.35 }: { text: string; delay?: number })
   );
 }
 
-const fade = (delay: number) => ({
+/* Animacionet e hyrjes presin derisa intro kinematik të zbehet (`revealed`). */
+const fade = (delay: number, revealed: boolean) => ({
   initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
+  animate: revealed ? { opacity: 1, y: 0 } : undefined,
   transition: { duration: 0.8, delay, ease: EASE_LUXE },
 });
 
@@ -86,6 +89,7 @@ export function Hero() {
   const h = content.hero;
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const revealed = useIntroRevealed();
 
   /* Parallax: fotoja lëviz më ngadalë se faqja, teksti zbehet gjatë scroll-it. */
   const { scrollYProgress } = useScroll({
@@ -151,7 +155,7 @@ export function Hero() {
         className="relative mx-auto w-full max-w-[88rem] px-5 pt-36 pb-40 sm:px-8 sm:pt-40 lg:pb-44"
       >
         <div className="max-w-[44rem]">
-          <motion.div {...fade(0.15)}>
+          <motion.div {...fade(0.15, revealed)}>
             <Eyebrow>{t(h.eyebrow)}</Eyebrow>
           </motion.div>
 
@@ -163,13 +167,13 @@ export function Hero() {
           </h1>
 
           <motion.p
-            {...fade(0.9)}
+            {...fade(0.9, revealed)}
             className="mt-7 max-w-xl text-base leading-relaxed text-pretty text-ivory/75 sm:text-lg"
           >
             {t(h.subtitle)}
           </motion.p>
 
-          <motion.div {...fade(1.05)} className="mt-10 flex flex-col gap-4 sm:flex-row">
+          <motion.div {...fade(1.05, revealed)} className="mt-10 flex flex-col gap-4 sm:flex-row">
             <ButtonLink href="#reservation" arrow>
               {t(h.primaryCta)}
             </ButtonLink>
@@ -180,7 +184,7 @@ export function Hero() {
 
           {/* Treguesit minimalë */}
           <motion.dl
-            {...fade(1.25)}
+            {...fade(1.25, revealed)}
             className="mt-14 grid max-w-xl grid-cols-3 divide-x divide-gold/20"
           >
             {h.stats.map((stat) => (
@@ -215,7 +219,7 @@ export function Hero() {
         href="#story"
         aria-label={t(h.scroll)}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={revealed ? { opacity: 1 } : undefined}
         transition={{ delay: 1.8, duration: 1 }}
         className="absolute right-8 bottom-28 hidden flex-col items-center gap-3 text-[10px] font-semibold tracking-[0.3em] text-gold/70 uppercase [writing-mode:vertical-rl] lg:flex"
       >

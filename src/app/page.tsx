@@ -1,3 +1,4 @@
+import { CinematicIntro } from "@/components/CinematicIntro";
 import { FeatureBar } from "@/components/sections/FeatureBar";
 import { Footer } from "@/components/sections/Footer";
 import { Gallery } from "@/components/sections/Gallery";
@@ -11,7 +12,7 @@ import { Story } from "@/components/sections/Story";
 
 export default function Home() {
   return (
-    <>
+    <CinematicIntro src="/video/Cinematic-Intro.mp4">
       <Navbar />
       <main>
         <Hero />
@@ -24,6 +25,6 @@ export default function Home() {
         <Reservation />
       </main>
       <Footer />
-    </>
+    </CinematicIntro>
   );
 }
