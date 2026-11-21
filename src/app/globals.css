@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+/* -------------------------------------------------------------------------- */
+/*  Paleta "Chic Dark & Champagne Gold"                                        */
+/* -------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #0b0908; /* Deep Obsidian / Espresso Black — sfondi bazë */
+  --color-ink-soft: #110e0c; /* seksione alternative */
+  --color-bronze: #1a1511; /* Smoked Glass / Dark Bronze (përdoret me /72) */
+  --color-gold: #d4af72; /* Warm Champagne Gold */
+  --color-gold-light: #e6c78a;
+  --color-gold-soft: #dfbe82; /* fjalët italic në tituj, logoja */
+  --color-gold-deep: #b88b4a;
+  --color-amber: #d48c46; /* shkëlqimi atmosferik (LED mbi tulla) */
+  --color-ivory: #f7f3eb; /* teksti kryesor */
+  --color-muted: #a89f94; /* Warm Stone — teksti sekondar */
+
+  --animate-dialog-in: dialog-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-scroll-line: scroll-line 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes scroll-line {
+    0% {
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    45% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    55% {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+  }
+}
+
+@theme inline {
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-signature: var(--font-signature-script), cursive;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Bazat                                                                      */
+/* -------------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-ivory);
+    /* Cormorant ka shifra "old-style" si parazgjedhje — përdorim shifra të plota */
+    font-variant-numeric: lining-nums;
+  }
+
+  section[id],
+  footer[id] {
+    scroll-margin-top: 4.5rem;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 1.5px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Ari metalik, xhami i tymosur, drita                                        */
+/* -------------------------------------------------------------------------- */
+
+/* Gradienti metalik i butonave kryesorë */
+@utility bg-gold-gradient {
+  background-image: linear-gradient(135deg, #e2c185 0%, #b88b4a 100%);
+}
+
+/* Tekst me shkëlqim ari */
+@utility text-gold-gradient {
+  background-image: linear-gradient(135deg, #f3e0b5 0%, #dfbe82 45%, #b88b4a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Smoked Glass / Dark Bronze */
+@utility glass {
+  background-color: rgb(26 21 17 / 0.72);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgb(212 175 114 / 0.22);
+}
+
+/* Shkëlqim qelibari (si drita LED e ngrohtë mbi tulla) */
+@utility glow-amber {
+  background-image: radial-gradient(closest-side, rgb(212 140 70 / 0.14), transparent);
+}
+
+/* Unaza e kufirit për ShimmerBorder: shfaq vetëm "padding"-un (1px) */
+@utility mask-ring {
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+/* Pika të arta ndarëse në menu */
+@utility leader-dots {
+  background-image: radial-gradient(circle, rgb(212 175 114 / 0.5) 0.8px, transparent 1.3px);
+  background-size: 7px 3px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Tekstura                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/* Kokrrizë filmi mbi të gjithë faqen — i jep thellësi të zezës */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Muri me tulla, i ndriçuar vetëm aty ku bien "dritat LED" nga lart */
+.brick-lit {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='36'%3E%3Cpath d='M0 .5h88M0 18.5h88M44.5 0v18M.5 18v18' stroke='%23d4af72' stroke-opacity='.11' fill='none'/%3E%3C/svg%3E");
+  -webkit-mask-image:
+    radial-gradient(ellipse 20% 75% at 12% 0%, #000 0%, transparent 100%),
+    radial-gradient(ellipse 20% 75% at 50% 0%, #000 0%, transparent 100%),
+    radial-gradient(ellipse 20% 75% at 88% 0%, #000 0%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 20% 75% at 12% 0%, #000 0%, transparent 100%),
+    radial-gradient(ellipse 20% 75% at 50% 0%, #000 0%, transparent 100%),
+    radial-gradient(ellipse 20% 75% at 88% 0%, #000 0%, transparent 100%);
+}
+
+/* Konet e dritës LED (wall-washer) mbi muret */
+.led-wash {
+  background-image:
+    radial-gradient(ellipse 20% 75% at 12% 0%, rgb(212 140 70 / 0.14), transparent),
+    radial-gradient(ellipse 20% 75% at 50% 0%, rgb(212 140 70 / 0.1), transparent),
+    radial-gradient(ellipse 20% 75% at 88% 0%, rgb(212 140 70 / 0.14), transparent);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fushat e datës: ikona e kalendarit në ngjyrë ari */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+  filter: invert(76%) sepia(30%) saturate(520%) hue-rotate(358deg) brightness(92%);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Aksesueshmëria — respekto "reduce motion"                                  */
+/*  (Framer Motion e respekton vetë përmes <MotionConfig reducedMotion="user">) */
+/* -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
