@@ -1,22 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Mrs_Saint_Delafield, Plus_Jakarta_Sans } from "next/font/google";
+import { Bodoni_Moda, Jost, Mrs_Saint_Delafield } from "next/font/google";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { INTRO_STORAGE_KEY } from "@/lib/intro";
 import "./globals.css";
 
-/* Titujt — serif editorial (400–600 + italic) */
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+/* Titujt — modern serif (Didone) me kontrast të lartë dhe italic elegant.
+ * `opsz` përshtat formën sipas madhësisë: vija më të holla në titujt e mëdhenj.
+ * Për ta zëvendësuar me Lumiere: next/font/local me skedarët e licencuar. */
+const display = Bodoni_Moda({
+  variable: "--font-display-face",
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
+  axes: ["opsz"],
   display: "swap",
 });
 
-/* Teksti dhe navigimi */
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+/* Teksti, navigimi, butonat — geometric sans-serif (në frymën e Futura) */
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin", "latin-ext"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -58,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="sq"
       data-scroll-behavior="smooth"
-      className={`${cormorant.variable} ${jakarta.variable} ${signature.variable} antialiased`}
+      className={`${display.variable} ${jost.variable} ${signature.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>

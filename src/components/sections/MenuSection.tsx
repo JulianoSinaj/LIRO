@@ -127,7 +127,11 @@ export function MenuSection() {
                       layoutId="menu-tab-pill"
                       aria-hidden="true"
                       className="bg-gold-gradient absolute inset-0 -z-10 rounded-full shadow-[0_8px_24px_-10px_rgb(212_175_114/0.7)]"
-                      transition={{ type: "spring", stiffness: 320, damping: 32 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 320,
+                        damping: 32,
+                      }}
                     />
                   )}
                   <span className="relative">{t(cat.label)}</span>
@@ -156,7 +160,7 @@ export function MenuSection() {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.4, ease: EASE_LUXE }}
                 >
-                  <h3 className="mt-4 font-serif text-4xl text-gold-soft italic sm:text-5xl">
+                  <h3 className="mt-4 font-display text-[2rem] text-gold-gradient italic sm:text-[2.6rem]">
                     {t(category.label)}
                   </h3>
                   <p
@@ -200,17 +204,21 @@ export function MenuSection() {
                       }}
                     >
                       <div className="flex items-baseline gap-3">
-                        <h4 className="font-serif text-xl leading-snug font-medium text-ivory sm:text-[1.4rem]">
+                        <h4 className="font-display text-xl leading-snug font-medium text-ivory sm:text-[1.4rem]">
                           {t(item.name)}
                         </h4>
                         <span aria-hidden="true" className="leader-dots h-2 min-w-6 flex-1" />
                         <span className="shrink-0 font-sans text-[15px] font-semibold tracking-wide text-gold-light tabular-nums">
-                          {item.price}
-                          {currencySuffix}
+                          {(Array.isArray(item.price) ? item.price : [item.price])
+                            .map((price) => `${price}${currencySuffix}`)
+                            .join(" / ")}
                         </span>
                       </div>
                       {item.name[otherLang] !== item.name[lang] && (
-                        <p lang={otherLang} className="font-serif text-[15px] text-muted/80 italic">
+                        <p
+                          lang={otherLang}
+                          className="font-display text-[15px] text-muted/80 italic"
+                        >
                           {item.name[otherLang]}
                         </p>
                       )}

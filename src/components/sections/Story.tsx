@@ -70,7 +70,7 @@ function VideoDialog({
               aria-hidden="true"
               className="absolute inset-0 -z-10 bg-radial from-ink/40 to-ink"
             />
-            <p className="font-serif text-4xl leading-tight sm:text-5xl">
+            <p className="font-display text-[2rem] leading-tight sm:text-[2.6rem]">
               <AccentText text={t(v.comingSoonTitle)} />
             </p>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted sm:text-base">
@@ -188,7 +188,7 @@ export function Story() {
             <Eyebrow>{t(s.eyebrow)}</Eyebrow>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <h2 className="mt-6 font-serif text-[2.5rem] leading-[1.06] font-medium text-balance text-ivory sm:text-5xl xl:text-[3.5rem]">
+            <h2 className="mt-6 font-display text-[2.2rem] leading-[1.08] font-medium tracking-[-0.01em] text-balance text-ivory sm:text-[2.6rem] xl:text-[3.1rem]">
               <AccentText text={t(s.title)} />
             </h2>
           </FadeUp>

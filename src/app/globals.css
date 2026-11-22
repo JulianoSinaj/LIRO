@@ -1,23 +1,24 @@
 @import "tailwindcss";
 
 /* -------------------------------------------------------------------------- */
-/*  Paleta "Chic Dark & Champagne Gold"                                        */
+/*  Paleta "Obsidian, Champagne Gold, Olive & Bordeaux"                         */
 /* -------------------------------------------------------------------------- */
 @theme {
   --color-ink: #0b0908; /* Deep Obsidian / Espresso Black — sfondi bazë */
-  --color-ink-soft: #110e0c; /* seksione alternative */
-  --color-bronze: #1a1511; /* Smoked Glass / Dark Bronze (përdoret me /72) */
-  --color-gold: #d4af72; /* Warm Champagne Gold */
-  --color-gold-light: #e6c78a;
-  --color-gold-soft: #dfbe82; /* fjalët italic në tituj, logoja */
-  --color-gold-deep: #b88b4a;
+  --color-ink-soft: #120f0c; /* seksione alternative */
+  --color-bronze: #1b1612; /* Smoked Glass / Dark Bronze (përdoret me /72) */
+  --color-gold: #d6b074; /* Warm Champagne Gold */
+  --color-gold-light: #ecd09a;
+  --color-gold-soft: #e2c288; /* fjalët e theksuara në tituj, logoja */
+  --color-gold-deep: #b4843f;
   --color-amber: #d48c46; /* shkëlqimi atmosferik (LED mbi tulla) */
-  --color-ivory: #f7f3eb; /* teksti kryesor */
-  --color-muted: #a89f94; /* Warm Stone — teksti sekondar */
+  --color-olive: #8f9d62; /* ullinjtë e Panajës — shkëlqim i gjelbër i butë */
+  --color-wine: #8c2f3c; /* Bordeaux — verërat, mbrëmja */
+  --color-ivory: #f8f4ec; /* teksti kryesor */
+  --color-muted: #ada396; /* Warm Stone — teksti sekondar */
   --color-intro: #14100a; /* toni i skajeve të videos intro */
 
   --animate-dialog-in: dialog-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-scroll-line: scroll-line 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   --animate-intro-in: intro-in 0.6s ease-out both;
 
   @keyframes intro-in {
@@ -36,29 +37,11 @@
       transform: none;
     }
   }
-  @keyframes scroll-line {
-    0% {
-      transform: scaleY(0);
-      transform-origin: top;
-    }
-    45% {
-      transform: scaleY(1);
-      transform-origin: top;
-    }
-    55% {
-      transform: scaleY(1);
-      transform-origin: bottom;
-    }
-    100% {
-      transform: scaleY(0);
-      transform-origin: bottom;
-    }
-  }
 }
 
 @theme inline {
-  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), "Bodoni 72", "Didot", ui-serif, Georgia, serif;
+  --font-sans: var(--font-jost), "Futura", ui-sans-serif, system-ui, sans-serif;
   --font-signature: var(--font-signature-script), cursive;
 }
 
@@ -75,13 +58,26 @@
   body {
     background-color: var(--color-ink);
     color: var(--color-ivory);
-    /* Cormorant ka shifra "old-style" si parazgjedhje — përdorim shifra të plota */
     font-variant-numeric: lining-nums;
+    font-weight: 350;
+    letter-spacing: 0.005em;
   }
 
   section[id],
   footer[id] {
     scroll-margin-top: 4.5rem;
+  }
+
+  /* Serif-i i titujve: pak më i trashë se pesha bazë, që vijat e holla të
+     shihen qartë. Klasat font-* (p.sh. font-semibold te logoja) e mbishkruajnë. */
+  .font-display {
+    font-weight: 500;
+  }
+
+  /* Titujt e mëdhenj: `opsz` i kufizuar — kontrast i lartë, por vijat e holla
+     mbeten të dukshme edhe në ekranet jo-retina. */
+  :is(h1, h2, h3).font-display {
+    font-variation-settings: "opsz" 24;
   }
 
   ::selection {
@@ -101,15 +97,40 @@
 
 /* Gradienti metalik i butonave kryesorë */
 @utility bg-gold-gradient {
-  background-image: linear-gradient(135deg, #e2c185 0%, #b88b4a 100%);
+  background-image: linear-gradient(135deg, #f2d9a4 0%, #d6ac66 48%, #a9773a 100%);
 }
 
-/* Tekst me shkëlqim ari */
+/* Tekst me shkëlqim ari — fjalët e theksuara në tituj */
 @utility text-gold-gradient {
-  background-image: linear-gradient(135deg, #f3e0b5 0%, #dfbe82 45%, #b88b4a 100%);
+  background-image: linear-gradient(
+    105deg,
+    #f9e8c2 0%,
+    #ebc887 28%,
+    #d3a15d 55%,
+    #f1d8a4 78%,
+    #dcb071 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Fildish perlë — nuancë e ngrohtë metalike në titujt, si dritë që bie nga lart */
+@utility text-pearl {
+  background-image: linear-gradient(180deg, #fffaf2 20%, #ead8b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Italic + gradient: zgjeron zonën e pikturimit që shkronjat e pjerrëta të mos priten */
+@utility italic-bleed {
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
 }
 
 /* Smoked Glass / Dark Bronze */
@@ -122,7 +143,17 @@
 
 /* Shkëlqim qelibari (si drita LED e ngrohtë mbi tulla) */
 @utility glow-amber {
-  background-image: radial-gradient(closest-side, rgb(212 140 70 / 0.14), transparent);
+  background-image: radial-gradient(closest-side, rgb(212 140 70 / 0.16), transparent);
+}
+
+/* Shkëlqim ulliri — natyra e Panajës */
+@utility glow-olive {
+  background-image: radial-gradient(closest-side, rgb(143 157 98 / 0.14), transparent);
+}
+
+/* Shkëlqim bordo — vera, mbrëmja */
+@utility glow-wine {
+  background-image: radial-gradient(closest-side, rgb(140 47 60 / 0.2), transparent);
 }
 
 /* Unaza e kufirit për ShimmerBorder: shfaq vetëm "padding"-un (1px) */

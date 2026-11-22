@@ -70,13 +70,17 @@ export function Logo({ className, size = "md" }: LogoProps) {
       <span className="flex flex-col leading-none">
         <span
           className={cn(
-            "font-serif font-semibold whitespace-nowrap text-ivory uppercase",
+            "font-display font-semibold whitespace-nowrap text-ivory uppercase",
             lg
               ? "text-[1.7rem] tracking-[0.14em]"
               : "text-[1.05rem] tracking-[0.1em] sm:text-[1.35rem] sm:tracking-[0.12em]",
           )}
         >
-          Taverna <span className="text-gold-gradient">Li-Ro</span>
+          Taverna{" "}
+          <span className="text-gold-soft">
+            {/* Viza e Bodoni-t është shumë e hollë — përdorim vizën e Jost-it */}
+            Li<span className="font-sans font-medium">-</span>Ro
+          </span>
         </span>
         <span
           className={cn(

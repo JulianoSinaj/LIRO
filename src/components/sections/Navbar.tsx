@@ -18,37 +18,73 @@ function subscribeScroll(callback: () => void) {
 const getScrolled = () => window.scrollY > 32;
 const getScrolledServer = () => false;
 
-/** Seksioni aktiv: lexohet nga atributi `data-nav` i seksioneve. */
+/**
+ * Seksioni aktiv: lexohet nga atributi `data-nav` i seksioneve.
+ * Llogaritet nga pozicioni i scroll-it (seksioni që kalon vijën në 45% të
+ * ekranit). Kur klikohet një lidhje, ajo bëhet aktive menjëherë dhe mbetet e
+ * tillë gjatë scroll-it të butë deri te seksioni.
+ */
 function useActiveSection() {
   const [active, setActive] = useState("top");
+  const lockRef = useRef<{ id: string; until: number } | null>(null);
 
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-nav]"));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActive((entry.target as HTMLElement).dataset.nav ?? "");
-        }
-      },
-      { rootMargin: "-45% 0px -50% 0px" },
-    );
-    sections.forEach((section) => observer.observe(section));
+    let frame = 0;
 
-    /* Footer-i është i shkurtër: në fund të faqes aktivizo "Kontakti". */
-    const onScroll = () => {
+    const compute = () => {
+      frame = 0;
+      const lock = lockRef.current;
+      if (lock) {
+        if (performance.now() < lock.until) return;
+        lockRef.current = null;
+      }
+
+      /* Në fund të faqes: "Kontakti" (footer-i është i shkurtër). */
       const atBottom =
         window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-      if (atBottom) setActive("contact");
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
+      if (atBottom) {
+        setActive("contact");
+        return;
+      }
 
+      const line = window.innerHeight * 0.45;
+      const sections = document.querySelectorAll<HTMLElement>("[data-nav]");
+      let current: string | null = null;
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= line && rect.bottom > line) current = section.dataset.nav ?? "";
+      }
+      if (current !== null) setActive(current);
+    };
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(compute);
+    };
+    /* Scroll-i i butë mbaroi: lësho bllokimin dhe rillogarit. */
+    const onScrollEnd = () => {
+      lockRef.current = null;
+      schedule();
+    };
+
+    compute();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener("scrollend", onScrollEnd);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scrollend", onScrollEnd);
     };
   }, []);
 
-  return active;
+  /** Thirret kur klikohet një lidhje: e bën aktive menjëherë. */
+  const select = (id: string) => {
+    lockRef.current = { id, until: performance.now() + 1500 };
+    setActive(id);
+  };
+
+  return [active, select] as const;
 }
 
 export function LanguageToggle({ className }: { className?: string }) {
@@ -83,7 +119,7 @@ export function LanguageToggle({ className }: { className?: string }) {
 export function Navbar() {
   const { t } = useLanguage();
   const scrolled = useSyncExternalStore(subscribeScroll, getScrolled, getScrolledServer);
-  const active = useActiveSection();
+  const [active, selectSection] = useActiveSection();
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -158,13 +194,21 @@ export function Navbar() {
                 <li key={link.id}>
                   <a
                     href={`#${link.id}`}
+                    onClick={() => selectSection(link.id)}
                     aria-current={isActive ? "true" : undefined}
                     className={cn(
-                      "relative block px-2.5 py-2 text-[13px] font-medium tracking-[0.06em] whitespace-nowrap transition-colors duration-300 xl:px-3",
-                      isActive ? "text-gold-light" : "text-ivory/75 hover:text-ivory",
+                      "group relative block px-2.5 py-2 text-[13px] font-medium tracking-[0.06em] whitespace-nowrap transition-colors duration-300 xl:px-3",
+                      isActive ? "text-gold-light" : "text-ivory/75 hover:text-gold-light",
                     )}
                   >
                     {t(link.label)}
+                    {/* Vija e artë në hover (për lidhjet joaktive) */}
+                    {!isActive && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-2.5 -bottom-px h-px scale-x-0 bg-linear-to-r from-transparent via-gold to-transparent opacity-0 transition-[scale,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100 group-hover:opacity-100 xl:inset-x-3"
+                      />
+                    )}
                     {isActive && (
                       <motion.span
                         layoutId="nav-underline"
@@ -182,13 +226,6 @@ export function Navbar() {
 
         <div className="flex items-center gap-2.5 sm:gap-5">
           <LanguageToggle />
-          {/* Në celular CTA-ja është brenda menusë */}
-          <span className="hidden md:block">
-            <a href="#reservation" className={buttonClasses({ size: "sm" })}>
-              {t(content.nav.cta)}
-              <ButtonArrow className="size-3.5" />
-            </a>
-          </span>
           <button
             ref={toggleRef}
             type="button"
@@ -241,10 +278,13 @@ export function Navbar() {
                   >
                     <a
                       href={`#${link.id}`}
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        selectSection(link.id);
+                        setOpen(false);
+                      }}
                       aria-current={active === link.id ? "true" : undefined}
                       className={cn(
-                        "flex items-baseline gap-4 border-b border-gold/10 py-4 font-serif text-[2.1rem] leading-tight transition-colors",
+                        "flex items-baseline gap-4 border-b border-gold/10 py-4 font-display text-[2.1rem] leading-tight transition-colors",
                         active === link.id
                           ? "text-gold-light italic"
                           : "text-ivory hover:text-gold-light",

@@ -6,7 +6,7 @@
  *  faqes: tekstet, menunë, çmimet, oraret, kontaktet dhe fotot.
  *
  *  • Çdo tekst ka dy versione: `sq` (Shqip) dhe `en` (English).
- *  • Në tituj, fjalët mes *yjeve* shfaqen me italic në ngjyrë ari,
+ *  • Në tituj, fjalët mes *yjeve* shfaqen me italic dhe gradient ari,
  *    p.sh. "Një Përvojë *Fine Dining* në Zemër të Natyrës".
  *  • Vlerat e shënuara me  // TODO  janë placeholder dhe duhen zëvendësuar
  *    me të dhënat reale.
@@ -35,12 +35,12 @@ export const restaurant = {
     en: "Panaja, Vlorë, Albania",
   } satisfies Localized,
   contact: {
-    // TODO: Vendos numrin real të telefonit.
-    phoneDisplay: "+355 69 XX XX XXX",
-    // TODO: Numri në formatin ndërkombëtar, pa hapësira (p.sh. +355691234567).
-    phoneHref: "tel:+35569XXXXXXX",
-    // TODO: Numri i WhatsApp vetëm me shifra, pa "+" (p.sh. 355691234567).
-    whatsappNumber: "35569XXXXXXX",
+    // Numri siç shfaqet në faqe.
+    phoneDisplay: "+355 69 330 4188",
+    // Numri në formatin ndërkombëtar, pa hapësira.
+    phoneHref: "tel:+355693304188",
+    // Numri i WhatsApp vetëm me shifra, pa "+".
+    whatsappNumber: "355693304188",
   },
   social: {
     instagramHandle: "@taverna_li_ro",
@@ -49,11 +49,12 @@ export const restaurant = {
     tripadvisorUrl: "", // TODO (opsionale)
   },
   map: {
-    // Lidhja që hap Google Maps (kërkim sipas emrit dhe vendndodhjes).
-    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Taverna+Li-Ro+Panaja+Vlor%C3%AB",
-    // TODO (opsionale): Google Maps → Share → Embed a map → kopjo vetëm vlerën e `src`.
-    // Kur plotësohet, harta shfaqet automatikisht në footer.
-    embedUrl: "",
+    // Lidhja që hap vendndodhjen e Taverna Li-Ro në Google Maps.
+    mapsUrl: "https://maps.app.goo.gl/dzVHXaA6e8D6cKor9",
+    // Harta te seksioni "Vendndodhja" — e njëjta pikë (40.5514392, 19.4691347). Lëre bosh ("") për ta fshehur.
+    embedUrl: "https://www.google.com/maps?q=40.5514392,19.4691347&z=17&hl=sq&output=embed",
+    // Hap udhëzimet (navigimin) deri te restoranti.
+    directionsUrl: "https://www.google.com/maps/dir/?api=1&destination=40.5514392,19.4691347",
   },
 };
 
@@ -92,13 +93,6 @@ export const images = {
     alt: {
       sq: "Salla e darkës me drita të ngrohta muri",
       en: "The dining room in warm wall-lamp light",
-    },
-  },
-  privateDining: {
-    src: unsplash("1543826173-70651703c5a4", 1200),
-    alt: {
-      sq: "Pjatë fine dining e servirur me salcë të artë",
-      en: "A fine-dining plate finished with a golden sauce",
     },
   },
   reservation: {
@@ -146,13 +140,15 @@ export const gallery: (Photo & { caption: Localized })[] = [
 /* -------------------------------------------------------------------------- */
 /*  4. MENUJA                                                                  */
 /* -------------------------------------------------------------------------- */
-/*  Çmimet janë në Lekë (numër i plotë). Faqja i shfaq si "1200L".
- *  `tag` është opsional — përdoret për të theksuar një pjatë.                 */
+/*  Sipas menusë origjinale ("Taverna LIRO Menu Final.pdf").
+ *  Çmimet janë në Lekë (numër i plotë). Faqja i shfaq si "1200L".
+ *  Për dy çmime (p.sh. porcion i vogël / i madh) përdor `price: [300, 500]`.
+ *  `description` dhe `tag` janë opsionale.                                    */
 
 export type MenuItem = {
   name: Localized;
   description?: Localized;
-  price: number;
+  price: number | readonly number[];
   tag?: Localized;
 };
 
@@ -162,9 +158,6 @@ export type MenuCategory = {
   items: MenuItem[];
 };
 
-const houseSpecial: Localized = { sq: "Specialitet", en: "House special" };
-const forTwo: Localized = { sq: "Për dy", en: "For two" };
-
 export const currencySuffix = "L";
 
 export const menu: MenuCategory[] = [
@@ -173,54 +166,36 @@ export const menu: MenuCategory[] = [
     label: { sq: "Antipasta", en: "Starters" },
     items: [
       {
-        name: { sq: "Bukë shtëpie me vaj ulliri", en: "Homemade bread with olive oil" },
-        description: {
-          sq: "E pjekur çdo ditë, me ullinj vendas",
-          en: "Baked daily, served with local olives",
-        },
+        name: { sq: "Byrek Saçi", en: "Spinach Pie" },
+        price: 100,
+      },
+      {
+        name: { sq: "Salcë Kosi", en: "Sour Cream" },
+        price: 250,
+      },
+      {
+        name: { sq: "Patate", en: "Fries" },
+        price: 250,
+      },
+      {
+        name: { sq: "Turshi", en: "Pickled Vegetables" },
         price: 300,
       },
       {
-        name: { sq: "Djathë i bardhë me ullinj", en: "White cheese with olives" },
-        description: {
-          sq: "Djathë dele, ullinj dhe vaj ulliri ekstra i virgjër",
-          en: "Sheep's cheese, olives and extra virgin olive oil",
-        },
-        price: 500,
+        name: { sq: "Lakra të egra", en: "Wild Cabbage" },
+        price: 300,
       },
       {
-        name: { sq: "Fërgesë", en: "Fërgesë" },
-        description: {
-          sq: "Speca, domate dhe gjizë, në tavë balte",
-          en: "Peppers, tomatoes and curd cheese in a clay pot",
-        },
-        price: 600,
-        tag: houseSpecial,
+        name: { sq: "Djathë i bardhë", en: "White Cheese" },
+        price: 300,
       },
       {
-        name: { sq: "Speca të mbushur me gjizë", en: "Peppers stuffed with curd cheese" },
-        description: {
-          sq: "Speca të pjekur, gjizë e freskët dhe barishte",
-          en: "Roasted peppers, fresh curd cheese and herbs",
-        },
-        price: 450,
+        name: { sq: "Djathë kaçkavall", en: "Yellow Cheese" },
+        price: 300,
       },
       {
-        name: { sq: "Kungulleshka me salcë kosi", en: "Fried courgettes with yoghurt dip" },
-        description: {
-          sq: "Të skuqura, krokante, me hudhër",
-          en: "Crispy fried, with garlic yoghurt",
-        },
+        name: { sq: "Kërpudha", en: "Sautéed Mushrooms" },
         price: 400,
-      },
-      {
-        name: { sq: "Pjatë tradicionale", en: "Traditional platter" },
-        description: {
-          sq: "Proshutë, djathëra vendase, fiq, arra dhe bukë e pjekur",
-          en: "Cured ham, local cheeses, figs, walnuts and toasted bread",
-        },
-        price: 1200,
-        tag: forTwo,
       },
     ],
   },
@@ -229,234 +204,221 @@ export const menu: MenuCategory[] = [
     label: { sq: "Sallata", en: "Salads" },
     items: [
       {
-        name: { sq: "Sallatë fshati", en: "Village salad" },
-        description: {
-          sq: "Domate, kastravec, qepë, ullinj dhe djathë i bardhë",
-          en: "Tomato, cucumber, onion, olives and white cheese",
-        },
-        price: 450,
+        name: { sq: "Sallatë Ulliri", en: "Olive Salad" },
+        price: 250,
       },
       {
-        name: { sq: "Sallatë jeshile", en: "Green salad" },
-        description: {
-          sq: "Marule, rukola, qepë e njomë dhe salcë limoni",
-          en: "Lettuce, rocket, spring onion and lemon dressing",
-        },
+        name: { sq: "Sallatë Fshati", en: "Greek Salad" },
         price: 350,
       },
       {
-        name: { sq: "Sallatë Li-Ro", en: "Li-Ro salad" },
-        description: {
-          sq: "Rukola, domate qershi, parmixhano, arra dhe balsamik",
-          en: "Rocket, cherry tomatoes, parmesan, walnuts and balsamic",
-        },
-        price: 600,
-        tag: houseSpecial,
+        name: { sq: "Sallatë Jeshile", en: "Lettuce Salad" },
+        description: { sq: "E vogël / e madhe", en: "Small / large" },
+        price: [300, 500],
       },
       {
-        name: { sq: "Sallatë me ton", en: "Tuna salad" },
-        description: {
-          sq: "Ton, misër, ullinj, vezë dhe perime të freskëta",
-          en: "Tuna, sweetcorn, olives, egg and fresh vegetables",
-        },
-        price: 550,
+        name: { sq: "Sallatë Mikse", en: "Mixed Salad" },
+        description: { sq: "E vogël / e madhe", en: "Small / large" },
+        price: [300, 500],
       },
       {
-        name: { sq: "Sallatë Cezar me pulë", en: "Chicken Caesar salad" },
-        description: {
-          sq: "Pulë në zgarë, krutona, parmixhano dhe salcë Cezar",
-          en: "Grilled chicken, croutons, parmesan and Caesar dressing",
-        },
-        price: 700,
+        name: { sq: "Sallatë Taverne", en: "Tavern Salad" },
+        description: { sq: "E vogël / e madhe", en: "Small / large" },
+        price: [300, 500],
+      },
+      {
+        name: { sq: "Sallatë Rukola", en: "Arugula Salad" },
+        price: 500,
       },
     ],
   },
   {
-    id: "mish",
-    label: { sq: "Mish & Zgarë", en: "Meat & Grill" },
+    id: "kryesore",
+    label: { sq: "Pjata Kryesore", en: "Main Courses" },
     items: [
       {
-        name: { sq: "Biftek viçi", en: "Beef steak" },
-        description: {
-          sq: "300g, me patate të pjekura dhe perime në zgarë",
-          en: "300g, with roast potatoes and grilled vegetables",
-        },
-        price: 1800,
-        tag: houseSpecial,
-      },
-      {
-        name: { sq: "Brinjë qengji në zgarë", en: "Grilled lamb chops" },
-        description: {
-          sq: "Me barishte mesdhetare dhe hudhër",
-          en: "With Mediterranean herbs and garlic",
-        },
-        price: 1500,
-      },
-      {
-        name: { sq: "Tavë kosi", en: "Tavë kosi" },
-        description: {
-          sq: "Mish qengji i pjekur në furrë me kos dhe vezë",
-          en: "Oven-baked lamb with yoghurt and egg",
-        },
+        name: { sq: "Paidhaqe gici", en: "Piglet ribs" },
         price: 1000,
       },
       {
-        name: { sq: "Qofte në zgarë", en: "Grilled qofte" },
-        description: {
-          sq: "Qofte shtëpie me salcë kosi dhe sallatë",
-          en: "House meatballs with yoghurt sauce and salad",
-        },
-        price: 700,
+        name: { sq: "Peshk", en: "Grilled orata fish" },
+        price: 1000,
       },
       {
-        name: { sq: "Fileto pule në zgarë", en: "Grilled chicken fillet" },
-        description: {
-          sq: "Me pure patatesh dhe salcë kërpudhash",
-          en: "With mashed potatoes and mushroom sauce",
-        },
-        price: 800,
-      },
-      {
-        name: { sq: "Mish i përzier në zgarë", en: "Mixed grill" },
-        description: {
-          sq: "Biftek, qofte, salsiçe, krahë pule dhe garniturë",
-          en: "Steak, qofte, sausage, chicken wings and sides",
-        },
-        price: 3200,
-        tag: forTwo,
-      },
-    ],
-  },
-  {
-    id: "peshk",
-    label: { sq: "Peshk & Deti", en: "Fish & Seafood" },
-    items: [
-      {
-        name: { sq: "Levrek në zgarë", en: "Grilled sea bass" },
-        description: {
-          sq: "Me vaj ulliri, limon dhe perime të ziera",
-          en: "With olive oil, lemon and steamed greens",
-        },
-        price: 1600,
-      },
-      {
-        name: { sq: "Koc në zgarë", en: "Grilled sea bream" },
-        description: {
-          sq: "Peshk i ditës, i përgatitur thjesht",
-          en: "Catch of the day, simply prepared",
-        },
-        price: 1600,
-      },
-      {
-        name: { sq: "Karkaleca me hudhër", en: "Garlic prawns" },
-        description: {
-          sq: "Në tigan, me hudhër, djegës dhe verë të bardhë",
-          en: "Pan-fried with garlic, chilli and white wine",
-        },
-        price: 1400,
-        tag: houseSpecial,
-      },
-      {
-        name: { sq: "Kallamar i skuqur", en: "Fried calamari" },
-        description: { sq: "Me salcë tartare dhe limon", en: "With tartare sauce and lemon" },
-        price: 1100,
-      },
-      {
-        name: { sq: "Midhje me verë të bardhë", en: "Mussels in white wine" },
-        description: {
-          sq: "Me hudhër, majdanoz dhe bukë të pjekur",
-          en: "With garlic, parsley and toasted bread",
-        },
-        price: 900,
-      },
-      {
-        name: { sq: "Rizoto me fruta deti", en: "Seafood risotto" },
-        description: { sq: "Karkaleca, midhje dhe kallamar", en: "Prawns, mussels and calamari" },
+        name: { sq: "Ngjala", en: "Grilled eels" },
         price: 1300,
+      },
+      {
+        name: { sq: "Paidhaqe Qengji", en: "Lamb ribs" },
+        price: 1300,
+      },
+      {
+        name: { sq: "Zog Fshati", en: "Village chicken" },
+        price: 1200,
+      },
+      {
+        name: { sq: "Fileto viçi", en: "Filet mignon" },
+        price: 1500,
+      },
+      {
+        name: {
+          sq: "Zog në tavë saçi",
+          en: "Chicken with rice or pasta (cooked in a traditional way)",
+        },
+        price: 1700,
+      },
+      {
+        name: { sq: "Brinjë viçi në furrë", en: "Beef ribs" },
+        price: 2500,
+      },
+      {
+        name: { sq: "Fiorentina (1kg)", en: "Fiorentina (1kg)" },
+        price: 4500,
       },
     ],
   },
   {
     id: "embelsira",
-    label: { sq: "Ëmbëlsira", en: "Desserts" },
+    label: { sq: "Embëlsira", en: "Desserts" },
     items: [
       {
-        name: { sq: "Ëmbëlsira e shefit", en: "Chef's dessert" },
-        description: {
-          sq: "Akullore vanilje, krokante e artë dhe karamel i ngrohtë",
-          en: "Vanilla ice cream, golden crisp and warm caramel",
-        },
-        price: 600,
-        tag: houseSpecial,
+        name: { sq: "Bakllava", en: "Bakllava" },
+        price: 200,
       },
       {
-        name: { sq: "Trileçe shtëpie", en: "Homemade trileçe" },
-        description: {
-          sq: "Pandispanjë me tre lloje qumështi dhe karamel",
-          en: "Sponge soaked in three milks, topped with caramel",
-        },
-        price: 450,
+        name: { sq: "Kadaif", en: "Kadaif" },
+        price: 200,
       },
       {
-        name: { sq: "Bakllava", en: "Baklava" },
-        description: { sq: "Me arra dhe shurup mjalti", en: "With walnuts and honey syrup" },
-        price: 400,
+        name: { sq: "Cheesecake", en: "Cheesecake" },
+        price: 350,
       },
       {
         name: { sq: "Tiramisu", en: "Tiramisu" },
-        description: {
-          sq: "Mascarpone, kafe ekspres dhe kakao",
-          en: "Mascarpone, espresso and cocoa",
-        },
-        price: 500,
-      },
-      {
-        name: { sq: "Panna cotta me fruta pylli", en: "Panna cotta with forest berries" },
-        description: {
-          sq: "Krem vanilje me salcë frutash",
-          en: "Vanilla cream with a berry coulis",
-        },
-        price: 450,
+        price: 350,
       },
     ],
   },
   {
     id: "vera",
-    label: { sq: "Verëra", en: "Wines" },
+    label: { sq: "Verë", en: "Wine" },
     items: [
       {
-        name: { sq: "Verë shtëpie — 1 litër", en: "House wine — 1 litre" },
-        description: {
-          sq: "E kuqe ose e bardhë, prodhim vendas",
-          en: "Red or white, locally produced",
-        },
-        price: 1200,
-        tag: houseSpecial,
+        name: { sq: "Verë shtëpie – 1 gotë", en: "One glass of local wine" },
+        price: 150,
       },
       {
-        name: { sq: "Shesh i Zi — gotë", en: "Shesh i Zi — glass" },
-        description: { sq: "E kuqe e thatë shqiptare", en: "Dry Albanian red" },
+        name: { sq: "Verë shtëpie – 250ml", en: "Local wine 250ml" },
+        price: 250,
+      },
+      {
+        name: { sq: "Verë shtëpie – 500ml", en: "Local wine 500ml" },
         price: 400,
       },
       {
-        name: { sq: "Shesh i Bardhë — gotë", en: "Shesh i Bardhë — glass" },
-        description: { sq: "E bardhë e freskët shqiptare", en: "Crisp Albanian white" },
-        price: 400,
+        name: { sq: "Chianti 300ml", en: "Chianti 300ml" },
+        price: 1500,
       },
       {
-        name: { sq: "Kallmet — shishe", en: "Kallmet — bottle" },
-        description: { sq: "E kuqe e plotë, 750ml", en: "Full-bodied red, 750ml" },
-        price: 2800,
-      },
-      {
-        name: { sq: "Pulës — shishe", en: "Pulës — bottle" },
-        description: { sq: "E bardhë aromatike, 750ml", en: "Aromatic white, 750ml" },
+        name: { sq: "Chianti 750ml", en: "Chianti 750ml" },
         price: 2500,
       },
       {
-        name: { sq: "Prosecco — gotë", en: "Prosecco — glass" },
-        description: { sq: "Verë e gazuar italiane", en: "Italian sparkling wine" },
-        price: 500,
+        name: { sq: "Liro", en: "Liro" },
+        price: 1500,
+      },
+      {
+        name: { sq: "Persli", en: "Persli" },
+        price: 1700,
+      },
+      {
+        name: { sq: "Montepulciano", en: "Montepulciano" },
+        price: 2000,
+      },
+      {
+        name: { sq: "Pinot Grigio", en: "Pinot Grigio" },
+        price: 2000,
+      },
+      {
+        name: { sq: "Primitivo", en: "Primitivo" },
+        price: 4500,
+      },
+      {
+        name: { sq: "Amarone", en: "Amarone" },
+        price: 6500,
+      },
+    ],
+  },
+  {
+    id: "birra",
+    label: { sq: "Birra", en: "Beer" },
+    items: [
+      {
+        name: { sq: "Elbar", en: "Elbar" },
+        price: 150,
+      },
+      {
+        name: { sq: "Peroni", en: "Peroni" },
+        price: 200,
+      },
+      {
+        name: { sq: "Korca", en: "Korca" },
+        price: 200,
+      },
+      {
+        name: { sq: "Bavaria 0% Alkool", en: "Bavaria 0% Alcohol" },
+        price: 200,
+      },
+      {
+        name: { sq: "Heineken", en: "Heineken" },
+        price: 250,
+      },
+      {
+        name: { sq: "Paulaner", en: "Paulaner" },
+        price: 300,
+      },
+    ],
+  },
+  {
+    id: "freskuese",
+    label: { sq: "Freskuese", en: "Drinks" },
+    items: [
+      {
+        name: { sq: "Ujë", en: "Water" },
+        description: { sq: "500ml / 750ml", en: "500ml / 750ml" },
+        price: [100, 200],
+      },
+      {
+        name: { sq: "Çaj i Ftohtë", en: "Cold tea" },
+        price: 150,
+      },
+      {
+        name: { sq: "Fanta", en: "Fanta" },
+        price: 150,
+      },
+      {
+        name: { sq: "Sprite", en: "Sprite" },
+        price: 150,
+      },
+      {
+        name: { sq: "Coca-Cola", en: "Coca-Cola" },
+        price: 150,
+      },
+      {
+        name: { sq: "Lemon Soda", en: "Lemon Soda" },
+        price: 150,
+      },
+      {
+        name: { sq: "Ivi", en: "Ivi" },
+        price: 150,
+      },
+      {
+        name: { sq: "Schweppes", en: "Schweppes" },
+        price: 150,
+      },
+      {
+        name: { sq: "Bravo", en: "Bravo" },
+        price: 200,
       },
     ],
   },
@@ -474,7 +436,7 @@ export const signatureDishes: {
 }[] = [
   {
     id: "mish-premium",
-    categoryId: "mish",
+    categoryId: "kryesore",
     image: {
       src: unsplash("1529692236671-f1f6cf9683ba", 900),
       alt: { sq: "Biftek viçi i prerë me pirun", en: "Sliced beef steak with a fork" },
@@ -488,7 +450,7 @@ export const signatureDishes: {
   },
   {
     id: "peshk-i-eger",
-    categoryId: "peshk",
+    categoryId: "kryesore",
     image: {
       src: unsplash("1611171711912-e3f6b536f532", 900),
       alt: { sq: "Peshk i plotë në zgarë me limon", en: "Whole grilled fish with lemon" },
@@ -534,81 +496,19 @@ export const signatureDishes: {
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  5. REZERVIMET                                                              */
-/* -------------------------------------------------------------------------- */
-
-export const reservationSettings = {
-  firstSlot: "12:00", // ora e parë që mund të rezervohet
-  lastSlot: "22:30", // ora e fundit që mund të rezervohet
-  intervalMinutes: 30,
-  maxGuests: 20,
-};
-
-/* Emrat e ditëve/muajve për datën në konfirmim (shfletuesit nuk e formatojnë
- * gjithmonë saktë datën në shqip, prandaj i mbajmë këtu). */
-export const dateNames: Record<Lang, { weekdays: string[]; months: string[] }> = {
-  sq: {
-    weekdays: ["E diel", "E hënë", "E martë", "E mërkurë", "E enjte", "E premte", "E shtunë"],
-    months: [
-      "janar",
-      "shkurt",
-      "mars",
-      "prill",
-      "maj",
-      "qershor",
-      "korrik",
-      "gusht",
-      "shtator",
-      "tetor",
-      "nëntor",
-      "dhjetor",
-    ],
-  },
-  en: {
-    weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    months: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-  },
-};
-
-export const seatingOptions: { id: "indoor" | "garden"; label: Localized; hint: Localized }[] = [
-  {
-    id: "indoor",
-    label: { sq: "Ambient i Brendshëm", en: "Indoor Dining Room" },
-    hint: { sq: "Tulla, dru & dritë e ngrohtë", en: "Brick, wood & warm light" },
-  },
-  {
-    id: "garden",
-    label: { sq: "Kopshti me Ullinj", en: "Olive Garden" },
-    hint: { sq: "Nën qiell të hapur", en: "Under the open sky" },
-  },
-];
-
-/* -------------------------------------------------------------------------- */
-/*  6. TEKSTET E FAQES                                                         */
+/*  5. TEKSTET E FAQES                                                         */
 /* -------------------------------------------------------------------------- */
 
 export const navLinks: { id: string; label: Localized }[] = [
   { id: "top", label: { sq: "Kreu", en: "Home" } },
-  { id: "menu", label: { sq: "Menuja", en: "Menu" } },
   { id: "story", label: { sq: "Historia Jonë", en: "Our Story" } },
+  { id: "menu", label: { sq: "Menuja", en: "Menu" } },
+  { id: "location", label: { sq: "Vendndodhja", en: "Location" } },
   { id: "gallery", label: { sq: "Galeria", en: "Gallery" } },
   { id: "contact", label: { sq: "Kontakti", en: "Contact" } },
 ];
 
-export type FeatureIcon = "chef" | "wine" | "leaf" | "flame";
+export type FeatureIcon = "leaf" | "flame" | "star";
 
 export const content = {
   nav: {
@@ -629,39 +529,27 @@ export const content = {
       sq: "Mish premium në zgarë, peshku i freskët i ditës dhe verëra të përzgjedhura — mes mureve me tulla, drurit natyral dhe kopshtit me ullinj në Panaja.",
       en: "Premium grilled meats, the day's fresh catch and hand-picked wines — among red-brick walls, natural wood and an olive garden in Panaja.",
     },
-    primaryCta: { sq: "Rezervo Tavolinë", en: "Book a Table" },
-    secondaryCta: { sq: "Zbulo Historinë", en: "Discover Our Story" },
-    scroll: { sq: "Zbulo", en: "Scroll" },
-    // TODO: Përdorni vetëm shifra të vërteta (p.sh. vlerësimi real nga Google).
-    stats: [
-      { value: "100%", label: { sq: "Produkte të Freskëta", en: "Fresh Produce" } },
-      { value: "Premium", label: { sq: "Mish & Zgarë", en: "Meat & Grill" } },
-      { value: "4.9", star: true, label: { sq: "Vlerësim nga Miqtë", en: "Guest Rating" } },
-    ] as { value: string; star?: boolean; label: Localized }[],
   },
 
+  /* Shiriti poshtë Hero-s: tre treguesit kryesorë.
+   * TODO: Përdorni vetëm shifra të vërteta (p.sh. vlerësimi real nga Google). */
   features: [
     {
-      icon: "chef",
-      title: { sq: "Kuzhinë Artizanale", en: "Chef-Crafted Cuisine" },
-      text: { sq: "Çdo pjatë përgatitet me dorë", en: "Every plate made by hand" },
-    },
-    {
-      icon: "wine",
-      title: { sq: "Koleksion Verërash", en: "Curated Wine Collection" },
-      text: { sq: "Etiketa vendase & të huaja", en: "Local & international labels" },
-    },
-    {
       icon: "leaf",
-      title: { sq: "Përbërës të Përzgjedhur", en: "Premium Local Ingredients" },
-      text: { sq: "Produkte të freskëta të stinës", en: "Fresh, seasonal produce" },
+      value: "100%",
+      label: { sq: "Produkte Origjinale", en: "Original Produce" },
     },
     {
       icon: "flame",
-      title: { sq: "Ambient i Ngrohtë", en: "Intimate Ambiance" },
-      text: { sq: "Tulla, dru & dritë e butë", en: "Brick, wood & soft light" },
+      value: "Premium",
+      label: { sq: "Mish & Zgarë", en: "Meat & Grill" },
     },
-  ] as { icon: FeatureIcon; title: Localized; text: Localized }[],
+    {
+      icon: "star",
+      value: "4.9",
+      label: { sq: "Vlerësim nga Miqtë", en: "Guest Rating" },
+    },
+  ] as { icon: FeatureIcon; value: string; label: Localized }[],
 
   story: {
     eyebrow: { sq: "Historia Jonë", en: "Our Story" },
@@ -727,21 +615,6 @@ export const content = {
     },
   },
 
-  privateDining: {
-    eyebrow: { sq: "Darka Private", en: "Private Dining" },
-    title: { sq: "Darka *Ekskluzive* e Shefit", en: "The Chef's *Exclusive* Dinner" },
-    text: {
-      sq: "Një menu degustimi e krijuar posaçërisht për tavolinën tuaj — për përvjetorë, festime familjare apo darka biznesi. Shefi ju shoqëron pjatë pas pjate, me verëra të çiftuara me kujdes.",
-      en: "A tasting menu created just for your table — for anniversaries, family celebrations or business dinners. The chef guides you course by course, with carefully paired wines.",
-    },
-    highlights: [
-      { sq: "Menu degustimi sipas stinës", en: "Seasonal tasting menu" },
-      { sq: "Çiftim me verëra", en: "Wine pairing" },
-      { sq: "Evente private & festime", en: "Private events & celebrations" },
-    ],
-    cta: { sq: "Rezervo Tani", en: "Reserve Now" },
-  },
-
   gallery: {
     eyebrow: { sq: "Galeria", en: "Gallery" },
     title: { sq: "Atmosfera e *Li-Ro*", en: "The *Li-Ro* Atmosphere" },
@@ -752,80 +625,57 @@ export const content = {
     instagramCta: { sq: "Na ndiqni në Instagram", en: "Follow us on Instagram" },
   },
 
+  location: {
+    eyebrow: { sq: "Vendndodhja", en: "Location" },
+    title: { sq: "Na Gjeni në *Panajë*", en: "Find Us in *Panaja*" },
+    subtitle: {
+      sq: "Pak minuta nga qendra e Vlorës, mes ullinjve dhe qetësisë së Panajës.",
+      en: "A few minutes from the centre of Vlorë, among the olive trees and quiet of Panaja.",
+    },
+    addressLabel: { sq: "Adresa", en: "Address" },
+    hoursLabel: { sq: "Orari", en: "Opening hours" },
+    phoneLabel: { sq: "Telefon", en: "Phone" },
+    directions: { sq: "Merr Udhëzimet", en: "Get Directions" },
+    openInMaps: { sq: "Hap në Google Maps", en: "Open in Google Maps" },
+    mapTitle: { sq: "Harta e vendndodhjes", en: "Location map" },
+  },
+
   reservation: {
     eyebrow: { sq: "Rezervimi", en: "Reservations" },
     title: { sq: "Rezervoni *Tavolinën* Tuaj", en: "Reserve Your *Table*" },
     subtitle: {
-      sq: "Plotësoni formularin dhe dërgojani kërkesën me një mesazh në WhatsApp ose me një telefonatë. Ne ju konfirmojmë sa më shpejt.",
-      en: "Fill in the form, then send us your request via WhatsApp or a quick call. We'll confirm as soon as possible.",
+      sq: "Rezervimet bëhen vetëm me telefon. Na telefononi dhe ne ju gjejmë tavolinën e duhur për mbrëmjen tuaj.",
+      en: "Reservations are taken by phone only. Give us a call and we'll find the right table for your evening.",
     },
     groupsNote: {
-      sq: "Për grupe mbi 10 persona, darka private ose evente, na telefononi direkt.",
-      en: "For groups of more than 10, private dinners or events, please call us directly.",
+      sq: "Për grupe mbi 10 persona, darka private ose evente, na njoftoni gjatë telefonatës.",
+      en: "For groups of more than 10, private dinners or events, just let us know when you call.",
     },
     hoursLabel: { sq: "Orari", en: "Opening hours" },
-    phoneLabel: { sq: "Telefon", en: "Phone" },
-    whatsappLabel: { sq: "WhatsApp", en: "WhatsApp" },
-    whatsappText: { sq: "Shkruani në WhatsApp", en: "Message us on WhatsApp" },
-    fields: {
-      name: { sq: "Emri i plotë", en: "Full name" },
-      namePlaceholder: { sq: "p.sh. Arben Hoxha", en: "e.g. Jane Smith" },
-      phone: { sq: "Telefoni", en: "Phone" },
-      phonePlaceholder: { sq: "+355 6X XXX XXXX", en: "+355 6X XXX XXXX" },
-      date: { sq: "Data", en: "Date" },
-      time: { sq: "Ora", en: "Time" },
-      timePlaceholder: { sq: "Zgjidh orën", en: "Select a time" },
-      guests: { sq: "Persona", en: "Guests" },
-      seating: { sq: "Preferenca", en: "Seating preference" },
-      seatingSummary: { sq: "Preferenca", en: "Seating" },
-      noPreference: { sq: "Pa preferencë", en: "No preference" },
-      notes: { sq: "Shënime", en: "Notes" },
-      notesPlaceholder: {
-        sq: "p.sh. ditëlindje, karrige për fëmijë, alergji…",
-        en: "e.g. birthday, high chair, allergies…",
+    callEyebrow: { sq: "Rezervime me telefon", en: "Book by phone" },
+    callTitle: { sq: "Na *telefononi*", en: "Give us a *call*" },
+    callText: {
+      sq: "Stafi ynë ju konfirmon rezervimin menjëherë gjatë telefonatës.",
+      en: "Our team will confirm your reservation right away, during the call.",
+    },
+    call: { sq: "Telefono tani", en: "Call now" },
+    prepareTitle: {
+      sq: "Që telefonata të jetë e shpejtë, mbani gati:",
+      en: "To keep the call quick, have ready:",
+    },
+    prepare: [
+      { sq: "Datën dhe orën e dëshiruar", en: "Your preferred date and time" },
+      { sq: "Numrin e personave", en: "The number of guests" },
+      {
+        sq: "Preferencën: ambient i brendshëm ose kopshti me ullinj",
+        en: "Seating: indoor dining room or the olive garden",
       },
-      optional: { sq: "opsionale", en: "optional" },
-    },
-    guestUnit: {
-      one: { sq: "person", en: "guest" },
-      many: { sq: "persona", en: "guests" },
-    },
-    decreaseGuests: { sq: "Pakëso numrin e personave", en: "Decrease number of guests" },
-    increaseGuests: { sq: "Shto numrin e personave", en: "Increase number of guests" },
-    submit: { sq: "Konfirmo Rezervimin", en: "Confirm Reservation" },
-    submitHint: {
-      sq: "Në hapin tjetër mund ta dërgoni kërkesën direkt në WhatsApp ose të na telefononi.",
-      en: "In the next step you can send the request straight to WhatsApp or give us a call.",
-    },
-    errors: {
-      required: { sq: "Kjo fushë është e detyrueshme", en: "This field is required" },
-      phone: {
-        sq: "Vendosni një numër telefoni të vlefshëm",
-        en: "Please enter a valid phone number",
+      {
+        sq: "Raste të veçanta: ditëlindje, alergji, karrige për fëmijë",
+        en: "Special requests: birthdays, allergies, high chairs",
       },
-      pastDate: {
-        sq: "Zgjidhni datën e sotme ose një datë më vonë",
-        en: "Please choose today or a later date",
-      },
-    },
-    success: {
-      title: { sq: "Faleminderit, *{name}*!", en: "Thank you, *{name}*!" },
-      text: {
-        sq: "Kërkesa juaj për rezervim është gati. Dërgojani në WhatsApp ose na telefononi që ta konfirmojmë tavolinën tuaj.",
-        en: "Your reservation request is ready. Send it to us on WhatsApp or give us a call so we can confirm your table.",
-      },
-      summaryTitle: { sq: "Detajet e rezervimit", en: "Reservation details" },
-      whatsapp: { sq: "Dërgo në WhatsApp", en: "Send via WhatsApp" },
-      call: { sq: "Telefono tani", en: "Call now" },
-      edit: { sq: "Ndrysho detajet", en: "Edit details" },
-    },
-    whatsappMessage: {
-      greeting: {
-        sq: "Përshëndetje Taverna Li-Ro! Dëshiroj të rezervoj një tavolinë:",
-        en: "Hello Taverna Li-Ro! I would like to book a table:",
-      },
-      thanks: { sq: "Faleminderit!", en: "Thank you!" },
-    },
+    ],
+    callHint: { sq: "Telefononi brenda orarit të punës.", en: "Please call during opening hours." },
   },
 
   footer: {
@@ -833,11 +683,8 @@ export const content = {
       sq: "Fine dining & zgarë bashkëkohore, mes tullës, drurit dhe ullinjve të Panajës.",
       en: "Fine dining & contemporary grill among the brick, wood and olive trees of Panaja.",
     },
-    addressLabel: { sq: "Adresa", en: "Address" },
     hoursLabel: { sq: "Orari", en: "Opening hours" },
     contactLabel: { sq: "Kontakt", en: "Contact" },
-    openInMaps: { sq: "Hap në Google Maps", en: "Open in Google Maps" },
-    mapTitle: { sq: "Harta e vendndodhjes", en: "Location map" },
     rights: { sq: "Të gjitha të drejtat e rezervuara.", en: "All rights reserved." },
     backToTop: { sq: "Kthehu lart", en: "Back to top" },
   },

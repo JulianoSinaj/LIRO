@@ -1,10 +1,9 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { ArrowUp, ArrowUpRight, Clock, MapPin, Phone } from "lucide-react";
+import { ArrowUp, Clock, MapPin, Phone } from "lucide-react";
 import { content, navLinks, openingHours, restaurant } from "@/data/restaurantData";
 import { useLanguage } from "../LanguageProvider";
-import { FadeUp } from "../motion/FadeUp";
 import { StaggerContainer, StaggerItem } from "../motion/StaggerContainer";
 import { AmbientGlow, GoldRule } from "../ui/Atmosphere";
 import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "../ui/icons";
@@ -45,7 +44,7 @@ export function Footer() {
       {/* Fjala "LI-RO" e madhe, si gdhendje në sfond */}
       <p
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 -bottom-[0.18em] text-center font-serif text-[30vw] leading-none font-semibold tracking-[0.04em] text-transparent select-none [-webkit-text-stroke:1px_rgb(212_175_114/0.09)] lg:text-[22rem]"
+        className="pointer-events-none absolute inset-x-0 -bottom-[0.18em] text-center font-display text-[30vw] leading-none font-semibold tracking-[0.04em] text-transparent select-none [-webkit-text-stroke:1px_rgb(212_175_114/0.09)] lg:text-[22rem]"
       >
         LI-RO
       </p>
@@ -56,7 +55,7 @@ export function Footer() {
           className="grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-10"
         >
           {/* Logoja & rrjetet sociale */}
-          <StaggerItem className="lg:col-span-5">
+          <StaggerItem className="md:col-span-2 lg:col-span-5">
             <Logo size="lg" />
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">{t(f.tagline)}</p>
             <ul className="mt-7 flex gap-3">
@@ -76,39 +75,14 @@ export function Footer() {
             </ul>
           </StaggerItem>
 
-          {/* Adresa */}
-          <StaggerItem className="lg:col-span-3">
-            <h2 className={columnTitle}>{t(f.addressLabel)}</h2>
-            <p className="mt-5 flex items-start gap-3 font-serif text-xl text-ivory">
-              <MapPin
-                className="mt-1 size-4 shrink-0 text-gold"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-              {t(restaurant.address)}
-            </p>
-            <a
-              href={map.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group mt-4 inline-flex items-center gap-1.5 text-sm text-gold-light/90 transition-colors hover:text-gold-light"
-            >
-              {t(f.openInMaps)}
-              <ArrowUpRight
-                className="size-4 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                aria-hidden="true"
-              />
-            </a>
-          </StaggerItem>
-
-          {/* Orari & kontakti */}
-          <StaggerItem className="lg:col-span-4">
+          {/* Orari */}
+          <StaggerItem className="lg:col-span-3 lg:col-start-7">
             <h2 className={columnTitle}>{t(f.hoursLabel)}</h2>
             <ul className="mt-5 space-y-1.5">
               {openingHours.map((h) => (
                 <li
                   key={h.days.sq}
-                  className="flex items-start gap-3 font-serif text-xl text-ivory"
+                  className="flex items-start gap-3 font-display text-xl text-ivory"
                 >
                   <Clock
                     className="mt-1 size-4 shrink-0 text-gold"
@@ -122,8 +96,12 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <h2 className={`${columnTitle} mt-8`}>{t(f.contactLabel)}</h2>
-            <ul className="mt-4 space-y-2 text-sm">
+          </StaggerItem>
+
+          {/* Kontakti */}
+          <StaggerItem className="lg:col-span-3">
+            <h2 className={columnTitle}>{t(f.contactLabel)}</h2>
+            <ul className="mt-5 space-y-2.5 text-sm">
               <li>
                 <a
                   href={contact.phoneHref}
@@ -131,6 +109,17 @@ export function Footer() {
                 >
                   <Phone className="size-4 text-gold" strokeWidth={1.5} aria-hidden="true" />
                   {contact.phoneDisplay}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={map.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 text-ivory transition-colors hover:text-gold-light"
+                >
+                  <MapPin className="size-4 text-gold" strokeWidth={1.5} aria-hidden="true" />
+                  {t(restaurant.address)}
                 </a>
               </li>
               <li>
@@ -147,18 +136,6 @@ export function Footer() {
             </ul>
           </StaggerItem>
         </StaggerContainer>
-
-        {map.embedUrl && (
-          <FadeUp className="mt-14 overflow-hidden rounded-2xl border border-gold/20">
-            <iframe
-              src={map.embedUrl}
-              title={t(f.mapTitle)}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="h-72 w-full grayscale invert-[0.9] hue-rotate-180 sm:h-80"
-            />
-          </FadeUp>
-        )}
 
         {/* Rreshti i fundit */}
         <div className="mt-16 flex flex-col items-center gap-6 border-t border-gold/12 pt-8 text-xs text-muted sm:mt-20 lg:flex-row lg:justify-between">

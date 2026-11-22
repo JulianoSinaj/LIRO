@@ -31,7 +31,7 @@ export function Eyebrow({
 
 type SectionHeadingProps = {
   eyebrow: string;
-  /** Fjalët mes *yjeve* dalin me italic ari. */
+  /** Fjalët mes *yjeve* dalin me italic dhe gradient ari. */
   title: string;
   subtitle?: string;
   align?: "center" | "left";
@@ -53,7 +53,7 @@ export function SectionHeading({
         <Eyebrow centered={centered}>{eyebrow}</Eyebrow>
       </FadeUp>
       <FadeUp delay={0.1}>
-        <h2 className="mt-6 font-serif text-[2.6rem] leading-[1.05] font-medium text-balance text-ivory sm:text-5xl lg:text-[3.6rem]">
+        <h2 className="mt-6 font-display text-[2.2rem] leading-[1.08] font-medium tracking-[-0.01em] text-balance text-ivory sm:text-[2.6rem] lg:text-[3.1rem]">
           <AccentText text={title} />
         </h2>
       </FadeUp>

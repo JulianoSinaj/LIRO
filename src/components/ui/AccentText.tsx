@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { cn } from "@/lib/cn";
 
 /** Ndan tekstin në pjesë: `{ text, accent }`. Fjalët mes *yjeve* janë "accent". */
@@ -17,19 +16,24 @@ export function parseAccent(text: string) {
 export const plainText = (text: string) => text.replace(/\*/g, "");
 
 /**
- * Shfaq një titull ku fjalët mes *yjeve* dalin me italic në ngjyrë ari,
- * p.sh. "Një Përvojë *Fine Dining* në Zemër të Natyrës".
+ * Shfaq një titull me nuancë fildish-perlë; fjalët mes *yjeve* dalin me italic
+ * dhe gradient ari, p.sh. "Një Përvojë *Fine Dining* në Zemër të Natyrës".
  */
 export function AccentText({ text, accentClassName }: { text: string; accentClassName?: string }) {
   return (
     <>
       {parseAccent(text).map((part, i) =>
         part.accent ? (
-          <span key={i} className={cn("font-serif italic text-gold-soft", accentClassName)}>
+          <span
+            key={i}
+            className={cn("italic-bleed font-display text-gold-gradient italic", accentClassName)}
+          >
             {part.text}
           </span>
         ) : (
-          <Fragment key={i}>{part.text}</Fragment>
+          <span key={i} className="text-pearl">
+            {part.text}
+          </span>
         ),
       )}
     </>

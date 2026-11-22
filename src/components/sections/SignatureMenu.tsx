@@ -47,7 +47,7 @@ export function SignatureMenu() {
                 </div>
 
                 <div className="flex flex-1 flex-col px-6 pt-5 pb-6">
-                  <h3 className="pr-14 font-serif text-[1.65rem] leading-tight font-medium text-ivory">
+                  <h3 className="pr-14 font-display text-[1.5rem] leading-tight font-medium text-ivory">
                     {t(dish.name)}
                   </h3>
                   <p className="mt-3 flex-1 pr-12 text-sm leading-relaxed text-muted">

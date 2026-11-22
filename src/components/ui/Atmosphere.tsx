@@ -4,11 +4,24 @@ import { cn } from "@/lib/cn";
  * Dritë radiale qelibari e fshehur pas seksioneve — imiton ndriçimin e ngrohtë
  * LED mbi muret me tulla. Pozicionohet me `className` (p.sh. "-left-40 top-0 size-[40rem]").
  */
-export function AmbientGlow({ className }: { className?: string }) {
+const glowTones = {
+  amber: "glow-amber",
+  olive: "glow-olive",
+  wine: "glow-wine",
+} as const;
+
+export function AmbientGlow({
+  className,
+  tone = "amber",
+}: {
+  className?: string;
+  /** Ngjyra e dritës: qelibar (parazgjedhje), ulli ose bordo. */
+  tone?: keyof typeof glowTones;
+}) {
   return (
     <div
       aria-hidden="true"
-      className={cn("glow-amber pointer-events-none absolute rounded-full", className)}
+      className={cn(glowTones[tone], "pointer-events-none absolute rounded-full", className)}
     />
   );
 }

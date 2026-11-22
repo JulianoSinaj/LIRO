@@ -3,13 +3,12 @@
 import { Fragment, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { Star } from "lucide-react";
 import { content, images } from "@/data/restaurantData";
+import { cn } from "@/lib/cn";
 import { EASE_LUXE } from "@/lib/motion";
 import { useIntroRevealed } from "../CinematicIntro";
 import { useLanguage } from "../LanguageProvider";
 import { parseAccent, plainText } from "../ui/AccentText";
-import { ButtonLink } from "../ui/Button";
 import { Eyebrow } from "../ui/SectionHeading";
 
 /**
@@ -33,10 +32,13 @@ function AnimatedTitle({ text, delay = 0.35 }: { text: string; delay?: number })
   const renderWord = (word: string, i: number, accent: boolean) => (
     <span
       key={i}
-      className="inline-block overflow-hidden pr-[0.06em] pb-[0.1em] -mb-[0.1em] align-bottom"
+      className="-mr-[0.12em] -ml-[0.12em] inline-block overflow-hidden pr-[0.18em] pb-[0.14em] pl-[0.12em] -mb-[0.14em] align-bottom"
     >
       <motion.span
-        className={accent ? "inline-block font-serif italic text-gold-soft" : "inline-block"}
+        className={cn(
+          "inline-block italic-bleed",
+          accent ? "text-gold-gradient italic" : "text-pearl",
+        )}
         initial={{ y: "110%", opacity: 0 }}
         animate={revealed ? { y: "0%", opacity: 1 } : undefined}
         transition={{ duration: 1.1, delay: delay + i * 0.07, ease: EASE_LUXE }}
@@ -105,7 +107,7 @@ export function Hero() {
       ref={sectionRef}
       id="top"
       data-nav="top"
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden"
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden lg:min-h-[calc(100svh-6.5rem)]"
     >
       {/* Fotoja — Ken Burns (zoom i ngadaltë) + parallax */}
       <motion.div style={{ y: imageY }} className="absolute inset-0 -z-20">
@@ -143,16 +145,17 @@ export function Hero() {
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 -z-10 h-56 bg-linear-to-t from-ink to-transparent"
+        className="glow-amber absolute top-[5%] -left-60 -z-10 size-[40rem] rounded-full"
       />
+      {/* Shkrirja me faqen poshtë — e fundit, që të mbulojë edhe shkëlqimin */}
       <div
         aria-hidden="true"
-        className="glow-amber absolute top-1/4 -left-60 -z-10 size-[44rem] rounded-full"
+        className="absolute inset-x-0 bottom-0 -z-10 h-72 bg-linear-to-t from-ink via-ink/75 to-transparent"
       />
 
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
-        className="relative mx-auto w-full max-w-[88rem] px-5 pt-36 pb-40 sm:px-8 sm:pt-40 lg:pb-44"
+        className="relative mx-auto w-full max-w-[88rem] px-5 pt-36 pb-40 sm:px-8 sm:pt-40 lg:pt-28 lg:pb-36"
       >
         <div className="max-w-[44rem]">
           <motion.div {...fade(0.15, revealed)}>
@@ -161,7 +164,7 @@ export function Hero() {
 
           <h1
             key={lang}
-            className="mt-7 font-serif text-[2.9rem] leading-[1.02] font-medium text-ivory sm:text-[4rem] lg:text-[4.75rem]"
+            className="mt-7 font-display text-[2.5rem] leading-[1.06] font-medium tracking-[-0.01em] text-ivory sm:text-[3.4rem] lg:text-[4.1rem]"
           >
             <AnimatedTitle text={t(h.title)} />
           </h1>
@@ -172,62 +175,8 @@ export function Hero() {
           >
             {t(h.subtitle)}
           </motion.p>
-
-          <motion.div {...fade(1.05, revealed)} className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <ButtonLink href="#reservation" arrow>
-              {t(h.primaryCta)}
-            </ButtonLink>
-            <ButtonLink href="#story" variant="glass">
-              {t(h.secondaryCta)}
-            </ButtonLink>
-          </motion.div>
-
-          {/* Treguesit minimalë */}
-          <motion.dl
-            {...fade(1.25, revealed)}
-            className="mt-14 grid max-w-xl grid-cols-3 divide-x divide-gold/20"
-          >
-            {h.stats.map((stat) => (
-              <div
-                key={stat.label.sq}
-                className="flex flex-col-reverse gap-2 px-3 first:pl-0 sm:px-6"
-              >
-                <dt className="text-[10px] leading-snug font-semibold tracking-[0.18em] text-muted uppercase sm:text-[11px]">
-                  {t(stat.label)}
-                </dt>
-                <dd className="flex items-center gap-1.5 font-serif text-[1.7rem] leading-none text-ivory sm:text-4xl">
-                  {stat.value}
-                  {stat.star && (
-                    <>
-                      <Star
-                        className="size-4 fill-gold text-gold sm:size-5"
-                        strokeWidth={0}
-                        aria-hidden="true"
-                      />
-                      <span className="sr-only">/ 5</span>
-                    </>
-                  )}
-                </dd>
-              </div>
-            ))}
-          </motion.dl>
         </div>
       </motion.div>
-
-      {/* Treguesi i scroll-it */}
-      <motion.a
-        href="#story"
-        aria-label={t(h.scroll)}
-        initial={{ opacity: 0 }}
-        animate={revealed ? { opacity: 1 } : undefined}
-        transition={{ delay: 1.8, duration: 1 }}
-        className="absolute right-8 bottom-28 hidden flex-col items-center gap-3 text-[10px] font-semibold tracking-[0.3em] text-gold/70 uppercase [writing-mode:vertical-rl] lg:flex"
-      >
-        {t(h.scroll)}
-        <span className="relative h-16 w-px overflow-hidden bg-gold/15">
-          <span className="animate-scroll-line absolute inset-0 bg-gold" />
-        </span>
-      </motion.a>
     </section>
   );
 }

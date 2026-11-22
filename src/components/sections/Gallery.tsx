@@ -32,7 +32,7 @@ export function Gallery() {
 
   return (
     <section id="gallery" data-nav="gallery" className="relative overflow-x-clip py-24 sm:py-32">
-      <AmbientGlow className="-top-40 -left-40 size-[44rem]" />
+      <AmbientGlow tone="olive" className="-top-40 -left-40 size-[44rem]" />
 
       <div className="relative mx-auto max-w-[88rem] px-5 sm:px-8">
         <SectionHeading eyebrow={t(g.eyebrow)} title={t(g.title)} subtitle={t(g.subtitle)} />
@@ -61,7 +61,7 @@ export function Gallery() {
                     aria-hidden="true"
                     className="h-px w-6 origin-left bg-gold transition-[width] duration-700 group-hover:w-10"
                   />
-                  <span className="font-serif text-lg text-ivory italic sm:text-2xl">
+                  <span className="font-display text-lg text-ivory italic sm:text-2xl">
                     {t(photo.caption)}
                   </span>
                 </figcaption>
