@@ -1,132 +1,150 @@
 "use client";
 
-import Image from "next/image";
-import { Check, Clock, Phone, Users } from "lucide-react";
-import { content, images, openingHours, restaurant } from "@/data/restaurantData";
+import { useEffect, useState } from "react";
+import {
+  Check,
+  Copy,
+  MessageCircle,
+  MessageCircleMore,
+  MessageSquareText,
+  Phone,
+  type LucideIcon,
+} from "lucide-react";
+import { content, openingHours, restaurant } from "@/data/restaurantData";
+import { cn } from "@/lib/cn";
 import { useLanguage } from "../LanguageProvider";
 import { FadeUp } from "../motion/FadeUp";
-import { ShimmerBorder } from "../motion/ShimmerBorder";
-import { AccentText } from "../ui/AccentText";
-import { AmbientGlow } from "../ui/Atmosphere";
-import { buttonClasses } from "../ui/Button";
-import { Eyebrow, SectionHeading } from "../ui/SectionHeading";
+import { Arrow } from "../ui/Button";
+import { AccentText, Eyebrow } from "../ui/Typography";
 
 /* -------------------------------------------------------------------------- */
-/*  Seksioni — rezervimet bëhen vetëm me telefon                              */
+/*  Rezervimi — vetëm me telefon: thirrje, WhatsApp, Viber, SMS               */
 /* -------------------------------------------------------------------------- */
+
+type ChannelId = (typeof content.reservation.channels)[number]["id"];
+
+const icons: Record<ChannelId, LucideIcon> = {
+  call: Phone,
+  whatsapp: MessageCircle,
+  viber: MessageCircleMore,
+  sms: MessageSquareText,
+};
+
+/** Lidhja për secilin kanal, me mesazhin e parashkruar ku mbështetet. */
+function channelHref(id: ChannelId, message: string) {
+  const { phoneHref, whatsappNumber } = restaurant.contact;
+  const intl = `+${whatsappNumber}`;
+  const text = encodeURIComponent(message);
+  switch (id) {
+    case "call":
+      return phoneHref;
+    case "whatsapp":
+      return `https://wa.me/${whatsappNumber}?text=${text}`;
+    case "viber":
+      return `viber://chat?number=${encodeURIComponent(intl)}`;
+    case "sms":
+      // "?&body=" funksionon si në iOS ashtu edhe në Android.
+      return `sms:${intl}?&body=${text}`;
+  }
+}
 
 export function Reservation() {
   const { t } = useLanguage();
   const r = content.reservation;
   const { phoneDisplay, phoneHref } = restaurant.contact;
+  const message = t(r.message);
+
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const id = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(id);
+  }, [copied]);
+
+  const copyNumber = async () => {
+    try {
+      await navigator.clipboard.writeText(phoneDisplay);
+      setCopied(true);
+    } catch {
+      /* Clipboard i bllokuar — numri mbetet i dukshëm për t'u kopjuar me dorë. */
+    }
+  };
 
   return (
-    <section
-      id="reservation"
-      data-nav=""
-      className="relative isolate overflow-x-clip py-24 sm:py-32"
-    >
-      {/* Sfondi: tarracë në mbrëmje, shumë e errësuar */}
-      <div aria-hidden="true" className="absolute inset-0 -z-10">
-        <Image
-          src={images.reservation.src}
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover opacity-25"
-        />
-        <div className="absolute inset-0 bg-linear-to-b from-ink via-ink/80 to-ink" />
-        <div className="absolute inset-0 bg-linear-to-r from-ink via-ink/60 to-ink/90" />
-      </div>
-      <AmbientGlow className="-right-40 top-1/4 size-[46rem]" />
-      <AmbientGlow tone="wine" className="-left-60 bottom-0 size-[40rem]" />
+    <section id="reservation" className="border-t border-gold/15 bg-ink-soft px-6 py-32 sm:px-10 lg:py-48">
+      <div className="mx-auto grid max-w-[90rem] gap-20 lg:grid-cols-12 lg:gap-0">
+        <FadeUp className="lg:col-span-4">
+          <Eyebrow>{t(r.eyebrow)}</Eyebrow>
+          <h2 className="mt-6 font-display text-[2.6rem] leading-[1.05] font-light text-balance sm:text-6xl">
+            <AccentText text={t(r.title)} />
+          </h2>
+          <p className="mt-8 max-w-sm text-[15px] leading-[1.9] text-ivory/75">{t(r.text)}</p>
+          {openingHours.length > 0 && (
+            <ul className="mt-10 space-y-2 text-xs tracking-[0.2em] text-muted uppercase">
+              {openingHours.map((h, i) => (
+                <li key={i}>
+                  {t(h.days)} · {t(h.time)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </FadeUp>
 
-      <div className="relative mx-auto grid max-w-[88rem] gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-16">
-        {/* Informacioni */}
-        <div className="lg:col-span-5">
-          <SectionHeading
-            eyebrow={t(r.eyebrow)}
-            title={t(r.title)}
-            subtitle={t(r.subtitle)}
-            align="left"
-          />
+        <FadeUp delay={0.1} className="lg:col-span-7 lg:col-start-6">
+          {/* Numri */}
+          <p className="text-[11px] tracking-[0.25em] text-muted uppercase">{t(r.phoneLabel)}</p>
+          <div className="mt-4 flex flex-wrap items-end gap-x-8 gap-y-4 border-b border-gold/25 pb-8">
+            <a
+              href={phoneHref}
+              className="font-display text-[2.4rem] leading-none font-light whitespace-nowrap text-ivory transition-colors duration-500 hover:text-gold sm:text-6xl lg:text-7xl"
+            >
+              {phoneDisplay}
+            </a>
+            <button
+              type="button"
+              onClick={copyNumber}
+              className="inline-flex items-center gap-2 pb-1 text-[11px] tracking-[0.25em] text-muted uppercase transition-colors duration-500 hover:text-gold"
+            >
+              {copied ? (
+                <Check className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+              ) : (
+                <Copy className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+              )}
+              <span aria-live="polite">{t(copied ? r.copied : r.copy)}</span>
+            </button>
+          </div>
 
-          <FadeUp delay={0.25}>
-            <div className="mt-10 flex items-center gap-5 border-y border-gold/12 py-5">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-full border border-gold/30 bg-gold/[0.04] text-gold-soft">
-                <Clock className="size-5" strokeWidth={1.3} aria-hidden="true" />
-              </span>
-              <div>
-                <p className="text-[10px] font-semibold tracking-[0.22em] text-muted uppercase">
-                  {t(r.hoursLabel)}
-                </p>
-                <p className="mt-1 font-display text-xl whitespace-pre-line text-ivory">
-                  {openingHours.map((h) => `${t(h.days)} · ${h.time}`).join("\n")}
-                </p>
-              </div>
-            </div>
-          </FadeUp>
-          <FadeUp delay={0.35}>
-            <p className="mt-6 flex items-start gap-3 text-sm leading-relaxed text-muted">
-              <Users
-                className="mt-0.5 size-4 shrink-0 text-gold"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-              {t(r.groupsNote)}
-            </p>
-          </FadeUp>
-        </div>
-
-        {/* Karta e telefonit */}
-        <FadeUp delay={0.15} className="lg:col-span-7" y={40}>
-          <ShimmerBorder className="rounded-3xl bg-bronze/72 shadow-[0_50px_100px_-40px_rgb(0_0_0/1)] backdrop-blur-xl">
-            <div className="relative p-6 sm:p-10 lg:p-12">
-              <Eyebrow>{t(r.callEyebrow)}</Eyebrow>
-              <h3 className="mt-5 font-display text-[2rem] leading-tight text-ivory sm:text-[2.6rem]">
-                <AccentText text={t(r.callTitle)} />
-              </h3>
-              <p className="mt-4 leading-relaxed text-muted">{t(r.callText)}</p>
-
-              <a
-                href={phoneHref}
-                className="group mt-8 flex items-center gap-5 rounded-2xl border border-gold/15 bg-ink/50 p-5 transition-[border-color,background-color] duration-300 hover:border-gold/45 hover:bg-ink/70 sm:p-7"
-              >
-                <span className="flex size-14 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/[0.06] text-gold-light transition-colors duration-300 group-hover:bg-gold/15">
-                  <Phone className="size-6" strokeWidth={1.3} aria-hidden="true" />
-                </span>
-                <span className="font-display text-2xl text-ivory tabular-nums lining-nums transition-colors group-hover:text-gold-light sm:text-4xl">
-                  {phoneDisplay}
-                </span>
-              </a>
-
-              <div className="mt-8">
-                <p className="text-[11px] font-semibold tracking-[0.2em] text-gold uppercase">
-                  {t(r.prepareTitle)}
-                </p>
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {r.prepare.map((item) => (
-                    <li key={item.en} className="flex items-start gap-3 text-sm text-ivory/90">
-                      <Check
-                        className="mt-0.5 size-4 shrink-0 text-gold"
-                        strokeWidth={1.75}
-                        aria-hidden="true"
-                      />
-                      {t(item)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-10">
-                <a href={phoneHref} className={buttonClasses({ className: "w-full py-[1.1rem]" })}>
-                  <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
-                  {t(r.call)}
-                </a>
-                <p className="mt-4 text-center text-xs text-muted">{t(r.callHint)}</p>
-              </div>
-            </div>
-          </ShimmerBorder>
+          {/* Kanalet */}
+          <ul className="grid sm:grid-cols-2">
+            {r.channels.map(({ id, label }, i) => {
+              const Icon = icons[id];
+              const external = id === "whatsapp";
+              return (
+                <li
+                  key={id}
+                  className={cn(
+                    "border-b border-gold/15",
+                    i % 2 === 0 && "sm:border-r sm:pr-8",
+                    i % 2 === 1 && "sm:pl-8",
+                  )}
+                >
+                  <a
+                    href={channelHref(id, message)}
+                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    className="group flex items-center gap-5 py-7 transition-colors duration-500"
+                  >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-gold/30 text-gold transition-colors duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
+                      <Icon className="size-[18px]" strokeWidth={1.25} aria-hidden="true" />
+                    </span>
+                    <span className="flex-1 font-display text-2xl text-ivory transition-colors duration-500 group-hover:text-gold">
+                      {t(label)}
+                    </span>
+                    <Arrow className="text-gold/50 group-hover:text-gold" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </FadeUp>
       </div>
     </section>

@@ -28,32 +28,29 @@ npm run lint     # kontrollon kodin me ESLint
 ```text
 src/
 ├── app/
-│   ├── layout.tsx              # fontet (Cormorant Garamond, Plus Jakarta Sans, firma), metadata
+│   ├── layout.tsx              # fontet (Cormorant Garamond, Jost), metadata
 │   ├── page.tsx                # faqja kryesore: bashkon të gjitha seksionet
-│   ├── globals.css             # paleta, xhami, gradienti i artë, tekstura (tulla, kokrrizë)
+│   ├── globals.css             # paleta (#0B0908 · #DFBE82 · #F7F3EB) dhe stilet e intros
 │   └── icon.svg                # favicon (logoja)
 ├── components/
 │   ├── sections/               # seksionet e faqes, sipas radhës
-│   │   ├── Navbar.tsx          # transparent → xhami, vija e artë nën lidhjen aktive, SQ | EN
-│   │   ├── Hero.tsx            # foto me Ken Burns + parallax, titulli animohet fjalë pas fjale
-│   │   ├── FeatureBar.tsx      # shiriti i xhamit me 4 veçoritë
-│   │   ├── Story.tsx           # Historia Jonë: foto + butoni Play (video) + firma e shefit
-│   │   ├── SignatureMenu.tsx   # 4 kartat e pjatave kryesore
-│   │   ├── MenuSection.tsx     # menuja e plotë me kategori (tabs)
-│   │   ├── PrivateDining.tsx   # banneri "Darka Ekskluzive e Shefit"
-│   │   ├── Gallery.tsx         # galeria "bento" me hover zoom
-│   │   ├── Reservation.tsx     # forma e rezervimit + konfirmimi (WhatsApp / telefon)
-│   │   └── Footer.tsx          # adresa, orari, kontakti, rrjetet sociale
-│   ├── motion/                 # komponentët e animacionit (Framer Motion)
-│   │   ├── FadeUp.tsx          # shfaqje e butë: y 30 → 0, opacity 0 → 1, 0.8s
-│   │   ├── StaggerContainer.tsx  # fëmijët shfaqen njëri pas tjetrit
-│   │   ├── ShimmerBorder.tsx   # kufi ari me shkëlqim drite që lëviz
+│   │   ├── Navbar.tsx          # logo · 4 lidhje · SQ / EN · "Rezervo →"
+│   │   ├── Hero.tsx            # foto në ekran të plotë, LI-RO në qendër, një buton
+│   │   ├── Essence.tsx         # "Thelbi": foto 7 kolona + filozofia & 3 vlerat
+│   │   ├── SignatureDishes.tsx # 3 pjatat kryesore si galeri arti (3:4)
+│   │   ├── Menu.tsx            # menuja në 2 kolona me tab-e (emri · vijë · çmimi)
+│   │   ├── Gallery.tsx         # atmosfera: 3 foto asimetrike me zoom të ngadaltë
+│   │   ├── Reservation.tsx     # forma (data, ora, personat, ambienti) → WhatsApp
+│   │   └── Footer.tsx          # logoja, adresa, orari, telefoni, Instagram
+│   ├── motion/                 # Framer Motion
+│   │   ├── FadeUp.tsx          # zbulim i butë: y 20 → 0, opacity 0 → 1, 0.9s
+│   │   ├── ParallaxImage.tsx   # foto me parallax të lehtë
 │   │   └── MotionProvider.tsx  # respekton "Reduce motion" të pajisjes
-│   ├── ui/                     # Logo, butonat, titujt, ikonat, dritat & muri me tulla
+│   ├── ui/                     # Logo, butonat, tipografia (mbititujt, titujt)
 │   └── LanguageProvider.tsx    # gjuha aktive (ruhet në shfletues)
 ├── data/
 │   └── restaurantData.ts       # ★ TË GJITHA tekstet, menuja, çmimet, oraret, kontaktet, fotot
-└── lib/                        # ndihmës të vegjël (klasat, kurbat e lëvizjes, kategoria e menusë)
+└── lib/                        # ndihmës të vegjël (klasat, kurbat e lëvizjes)
 public/
 └── images/                     # vendosni këtu fotot reale
 ```
@@ -61,7 +58,7 @@ public/
 ## Si të vendosni të dhënat reale
 
 Gjithçka ndryshohet te **`src/data/restaurantData.ts`**. Vlerat placeholder janë të shënuara me `TODO`.
-Në tituj, fjalët mes `*yjeve*` shfaqen me italic në ngjyrë ari, p.sh. `"Darka *Ekskluzive* e Shefit"`.
+Në tituj, fjalët mes `*yjeve*` shfaqen me italic në ngjyrë ari, p.sh. `"Shija e Vërtetë, *E Përpunuar* me Elegancë"`.
 
 | Çfarë | Ku |
 | --- | --- |

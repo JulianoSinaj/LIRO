@@ -6,8 +6,8 @@
  *  faqes: tekstet, menunë, çmimet, oraret, kontaktet dhe fotot.
  *
  *  • Çdo tekst ka dy versione: `sq` (Shqip) dhe `en` (English).
- *  • Në tituj, fjalët mes *yjeve* shfaqen me italic dhe gradient ari,
- *    p.sh. "Një Përvojë *Fine Dining* në Zemër të Natyrës".
+ *  • Në tituj, fjalët mes *yjeve* shfaqen me italic në ngjyrë ari,
+ *    p.sh. "Shija e Vërtetë, *E Përpunuar* me Elegancë".
  *  • Vlerat e shënuara me  // TODO  janë placeholder dhe duhen zëvendësuar
  *    me të dhënat reale.
  * ============================================================================
@@ -51,8 +51,8 @@ export const restaurant = {
   map: {
     // Lidhja që hap vendndodhjen e Taverna Li-Ro në Google Maps.
     mapsUrl: "https://maps.app.goo.gl/dzVHXaA6e8D6cKor9",
-    // Harta te seksioni "Vendndodhja" — e njëjta pikë (40.5514392, 19.4691347). Lëre bosh ("") për ta fshehur.
-    embedUrl: "https://www.google.com/maps?q=40.5514392,19.4691347&z=17&hl=sq&output=embed",
+    // Harta satelitore (t=k) te seksioni "Vendndodhja" — e njëjta pikë (40.5514392, 19.4691347). Lëre bosh ("") për ta fshehur.
+    embedUrl: "https://www.google.com/maps?q=40.5514392,19.4691347&z=18&t=k&hl=sq&output=embed",
     // Hap udhëzimet (navigimin) deri te restoranti.
     directionsUrl: "https://www.google.com/maps/dir/?api=1&destination=40.5514392,19.4691347",
   },
@@ -62,10 +62,27 @@ export const restaurant = {
 /*  2. ORARI I PUNËS                                                          */
 /* -------------------------------------------------------------------------- */
 
-export const openingHours: { days: Localized; time: string }[] = [
+export const openingHours: { days: Localized; time: Localized }[] = [
   // TODO: Përditëso oraret reale. Mund të shtosh më shumë rreshta.
-  { days: { sq: "E Hënë – E Diel", en: "Monday – Sunday" }, time: "12:00 – 23:30" },
+  {
+    days: { sq: "E Mërkurë – E Hënë", en: "Wednesday – Monday" },
+    time: { sq: "12:00 – 23:30", en: "12:00 – 23:30" },
+  },
+  // E Marta është ditë pushimi.
+  { days: { sq: "E Martë", en: "Tuesday" }, time: { sq: "Pushim", en: "Closed" } },
 ];
+
+/**
+ * Orari në formë të strukturuar — përdoret nga statusi "Hapur tani" në hero.
+ * Mbaje në përputhje me `openingHours` më sipër.
+ * Ditët: 0 = E Diel, 1 = E Hënë, 2 = E Martë … 6 = E Shtunë.
+ */
+export const schedule = {
+  timeZone: "Europe/Tirane",
+  open: "12:00",
+  close: "23:30",
+  closedDays: [2] as number[],
+};
 
 /* -------------------------------------------------------------------------- */
 /*  3. FOTOT                                                                   */
@@ -81,59 +98,49 @@ const unsplash = (id: string, width = 1600) =>
 type Photo = { src: string; alt: Localized };
 
 export const images = {
+  /* Hero: foto e gjerë, e errët, në ekran të plotë. */
   hero: {
-    src: unsplash("1594041680534-e8c8cdebd659", 2400),
+    src: unsplash("1558030006-450675393462", 2400),
     alt: {
-      sq: "Biftek i pjekur në zgarë me patate me rozmarinë, në tigan gize",
-      en: "Grilled steak with rosemary potatoes in a cast-iron pan",
+      sq: "Biftek i prerë mbi dërrasë druri, nën dritë të ngrohtë",
+      en: "Sliced steak on a wooden board in warm light",
     },
   },
+  /* "Thelbi": arkitektura — tulla, dru natyral, dritë e ngrohtë (foto vertikale). */
   story: {
-    src: unsplash("1578474846511-04ba529f0b88"),
+    src: unsplash("1578474846511-04ba529f0b88", 1600),
     alt: {
       sq: "Salla e darkës me drita të ngrohta muri",
       en: "The dining room in warm wall-lamp light",
     },
   },
-  reservation: {
-    src: unsplash("1579027989536-b7b1f875659b", 2000),
-    alt: { sq: "", en: "" }, // dekorative
-  },
 } satisfies Record<string, Photo>;
 
+/* Galeria e atmosferës — saktësisht 3 foto, radha përcakton formën:
+ *   1. panoramike (e gjerë)  ·  2. horizontale  ·  3. vertikale              */
 export const gallery: (Photo & { caption: Localized })[] = [
   {
-    src: unsplash("1572116469696-31de0f17cc34"),
-    alt: { sq: "Banaku i barit nën drita të ngrohta", en: "The bar under warm Edison lights" },
-    caption: { sq: "Mbrëmjet në Li-Ro", en: "Evenings at Li-Ro" },
+    // TODO: vendos këtu një foto panoramike reale të kopshtit me ullinj
+    // (p.sh. "/images/kopshti.jpg") dhe ndrysho titullin në "Kopshti me ullinj".
+    src: unsplash("1560053608-13721e0d69e8", 2400),
+    alt: {
+      sq: "Salla e restorantit me tavolina të shtruara nën dritë qelibari",
+      en: "The dining room with set tables in amber light",
+    },
+    caption: { sq: "Darka në dritë qelibari", en: "Dinner in amber light" },
   },
   {
-    src: unsplash("1553361371-9b22f78e8b1d", 1000),
-    alt: { sq: "Verë e kuqe duke u hedhur në gotë", en: "Red wine being poured into a glass" },
-    caption: { sq: "Kantina jonë", en: "Our cellar" },
-  },
-  {
-    src: unsplash("1600565193348-f74bd3c7ccdf", 1000),
-    alt: { sq: "Shefi duke gatuar me flakë në kuzhinë", en: "The chef cooking over open flame" },
-    caption: { sq: "Pas skenës", en: "Behind the pass" },
-  },
-  {
-    src: unsplash("1558030006-450675393462", 1000),
-    alt: { sq: "Biftek i prerë mbi dërrasë druri", en: "Sliced steak on a wooden board" },
+    src: unsplash("1529692236671-f1f6cf9683ba", 1600),
+    alt: { sq: "Biftek viçi i prerë me pirun", en: "Sliced beef steak with a fork" },
     caption: { sq: "Nga zgara", en: "From the grill" },
   },
   {
-    src: unsplash("1568213816046-0ee1c42bd559"),
-    alt: { sq: "Katër gota vere mbi një fuçi druri", en: "Four wine glasses on an oak barrel" },
-    caption: { sq: "Degustim verërash", en: "Wine tasting" },
-  },
-  {
-    src: unsplash("1560053608-13721e0d69e8"),
+    src: unsplash("1553361371-9b22f78e8b1d", 1200),
     alt: {
-      sq: "Salla elegante e restorantit me tavolina të shtruara",
-      en: "The elegant dining room with set tables",
+      sq: "Verë e kuqe duke u hedhur në gotë, pranë mishit të pjekur",
+      en: "Red wine poured into a glass beside roasted meat",
     },
-    caption: { sq: "Salla e darkës", en: "The dining room" },
+    caption: { sq: "Verë & mish", en: "Wine & meat" },
   },
 ];
 
@@ -141,7 +148,7 @@ export const gallery: (Photo & { caption: Localized })[] = [
 /*  4. MENUJA                                                                  */
 /* -------------------------------------------------------------------------- */
 /*  Sipas menusë origjinale ("Taverna LIRO Menu Final.pdf").
- *  Çmimet janë në Lekë (numër i plotë). Faqja i shfaq si "1200L".
+ *  Çmimet janë në Lekë (numër i plotë). Faqja i shfaq si "1200 L".
  *  Për dy çmime (p.sh. porcion i vogël / i madh) përdor `price: [300, 500]`.
  *  `description` dhe `tag` janë opsionale.                                    */
 
@@ -233,28 +240,20 @@ export const menu: MenuCategory[] = [
     ],
   },
   {
-    id: "kryesore",
-    label: { sq: "Pjata Kryesore", en: "Main Courses" },
+    id: "mish",
+    label: { sq: "Mish & Zgarë", en: "Meat & Grill" },
     items: [
       {
         name: { sq: "Paidhaqe gici", en: "Piglet ribs" },
         price: 1000,
       },
       {
-        name: { sq: "Peshk", en: "Grilled orata fish" },
-        price: 1000,
-      },
-      {
-        name: { sq: "Ngjala", en: "Grilled eels" },
-        price: 1300,
+        name: { sq: "Zog Fshati", en: "Village chicken" },
+        price: 1200,
       },
       {
         name: { sq: "Paidhaqe Qengji", en: "Lamb ribs" },
         price: 1300,
-      },
-      {
-        name: { sq: "Zog Fshati", en: "Village chicken" },
-        price: 1200,
       },
       {
         name: { sq: "Fileto viçi", en: "Filet mignon" },
@@ -274,6 +273,21 @@ export const menu: MenuCategory[] = [
       {
         name: { sq: "Fiorentina (1kg)", en: "Fiorentina (1kg)" },
         price: 4500,
+      },
+    ],
+  },
+  {
+    id: "peshk",
+    label: { sq: "Peshk & Deti", en: "Fish & Sea" },
+    // TODO: shtoni pjatat e tjera të detit kur të jenë në menu.
+    items: [
+      {
+        name: { sq: "Peshk", en: "Grilled orata fish" },
+        price: 1000,
+      },
+      {
+        name: { sq: "Ngjala", en: "Grilled eels" },
+        price: 1300,
       },
     ],
   },
@@ -424,74 +438,65 @@ export const menu: MenuCategory[] = [
   },
 ];
 
-/* Kartat "Signature Menu". `categoryId` lidh kartën me kategorinë e menusë që
- * hapet kur klikohet shigjeta. */
+/* Tab-et e menusë. Çdo tab shfaq një ose më shumë kategori nga lista sipër
+ * (sipas `id`). Kur një tab ka disa kategori, secila merr titullin e vet. */
+export const menuTabs: { id: string; label: Localized; categories: string[] }[] = [
+  { id: "antipasta", label: { sq: "Antipasta", en: "Starters" }, categories: ["antipasta", "sallata"] },
+  { id: "mish", label: { sq: "Mish & Zgarë", en: "Meat & Grill" }, categories: ["mish"] },
+  { id: "peshk", label: { sq: "Peshk & Deti", en: "Fish & Sea" }, categories: ["peshk"] },
+  { id: "vera", label: { sq: "Verëra", en: "Wines" }, categories: ["vera", "birra", "freskuese"] },
+  { id: "embelsira", label: { sq: "Embëlsira", en: "Desserts" }, categories: ["embelsira"] },
+];
+
+/* Tre pjatat "signature" — çmimet sipas menusë. Fotot janë vertikale (3:4). */
 export const signatureDishes: {
   id: string;
-  categoryId: string;
   image: Photo;
-  label: Localized;
   name: Localized;
   description: Localized;
+  price: number;
 }[] = [
   {
-    id: "mish-premium",
-    categoryId: "kryesore",
+    id: "fiorentina",
     image: {
-      src: unsplash("1529692236671-f1f6cf9683ba", 900),
-      alt: { sq: "Biftek viçi i prerë me pirun", en: "Sliced beef steak with a fork" },
-    },
-    label: { sq: "Nga zgara", en: "From the grill" },
-    name: { sq: "Mish Premium", en: "Premium Meat" },
-    description: {
-      sq: "Prerje të zgjedhura viçi, të pjekura në zgarë në pikën e duhur, me kripë deti dhe barishte.",
-      en: "Hand-selected beef cuts, grilled to just the right point, finished with sea salt and herbs.",
-    },
-  },
-  {
-    id: "peshk-i-eger",
-    categoryId: "kryesore",
-    image: {
-      src: unsplash("1611171711912-e3f6b536f532", 900),
-      alt: { sq: "Peshk i plotë në zgarë me limon", en: "Whole grilled fish with lemon" },
-    },
-    label: { sq: "Nga deti", en: "From the sea" },
-    name: { sq: "Peshk i Egër", en: "Wild Fish" },
-    description: {
-      sq: "Peshku i ditës nga bregu i Vlorës, i pjekur thjesht me vaj ulliri dhe limon.",
-      en: "The day's catch from the Vlorë coast, simply grilled with olive oil and lemon.",
-    },
-  },
-  {
-    id: "antipaste",
-    categoryId: "antipasta",
-    image: {
-      src: unsplash("1452195100486-9cc805987862", 900),
-      alt: { sq: "Djathë, fiq dhe arra mbi dërrasë", en: "Cheese, figs and walnuts on a board" },
-    },
-    label: { sq: "Për të ndarë", en: "To share" },
-    name: { sq: "Antipastë Tradicionale", en: "Traditional Antipasti" },
-    description: {
-      sq: "Djathëra vendase, fiq, arra dhe ullinj — fillimi i përsosur i darkës.",
-      en: "Local cheeses, figs, walnuts and olives — the perfect start to dinner.",
-    },
-  },
-  {
-    id: "embelsire",
-    categoryId: "embelsira",
-    image: {
-      src: unsplash("1551024506-0bccd828d307", 900),
+      src: unsplash("1594041680534-e8c8cdebd659", 1000),
       alt: {
-        sq: "Karamel i ngrohtë mbi akullore vanilje",
-        en: "Warm caramel poured over vanilla ice cream",
+        sq: "Biftek viçi në zgarë me patate, në tigan gize",
+        en: "Grilled beef steak with potatoes in a cast-iron pan",
       },
     },
-    label: { sq: "Fundi i ëmbël", en: "The sweet finale" },
-    name: { sq: "Ëmbëlsirë Artizanale", en: "Artisanal Dessert" },
+    name: { sq: "Fiorentina", en: "Fiorentina" },
     description: {
-      sq: "Akullore vanilje e bërë në shtëpi, krokante e artë dhe karamel i ngrohtë.",
-      en: "House-made vanilla ice cream, a golden crisp and warm caramel.",
+      sq: "Një kilogram viçi në zgarë, me kripë deti dhe barishte.",
+      en: "A kilogram of beef from the grill, sea salt and herbs.",
     },
+    price: 4500,
+  },
+  {
+    id: "peshk",
+    image: {
+      src: unsplash("1611171711912-e3f6b536f532", 1000),
+      alt: { sq: "Peshk i plotë në zgarë me limon", en: "Whole grilled fish with lemon" },
+    },
+    name: { sq: "Koçë në Zgarë", en: "Grilled Sea Bream" },
+    description: {
+      sq: "Peshku i ditës nga bregu i Vlorës, me vaj ulliri dhe limon.",
+      en: "The day's catch from the Vlorë coast, olive oil and lemon.",
+    },
+    price: 1000,
+  },
+  {
+    id: "vera-liro",
+    image: {
+      src: unsplash("1568213816046-0ee1c42bd559", 1000),
+      alt: { sq: "Gota vere mbi një fuçi druri", en: "Wine glasses on an oak barrel" },
+    },
+    name: { sq: "Verë Liro", en: "Liro Wine" },
+    description: {
+      sq: "Vera që mban emrin e shtëpisë, e zgjedhur për tryezën tonë.",
+      en: "The wine that carries the house name, chosen for our table.",
+    },
+    price: 1500,
   },
 ];
 
@@ -499,20 +504,18 @@ export const signatureDishes: {
 /*  5. TEKSTET E FAQES                                                         */
 /* -------------------------------------------------------------------------- */
 
+/* Navigimi — maksimumi 5 lidhje. `id` = id e seksionit në faqe. */
 export const navLinks: { id: string; label: Localized }[] = [
   { id: "top", label: { sq: "Kreu", en: "Home" } },
-  { id: "story", label: { sq: "Historia Jonë", en: "Our Story" } },
   { id: "menu", label: { sq: "Menuja", en: "Menu" } },
   { id: "location", label: { sq: "Vendndodhja", en: "Location" } },
-  { id: "gallery", label: { sq: "Galeria", en: "Gallery" } },
+  { id: "gallery", label: { sq: "Atmosfera", en: "Atmosphere" } },
   { id: "contact", label: { sq: "Kontakti", en: "Contact" } },
 ];
 
-export type FeatureIcon = "leaf" | "flame" | "star";
-
 export const content = {
   nav: {
-    cta: { sq: "Rezervo Tavolinë", en: "Book a Table" },
+    cta: { sq: "Rezervo", en: "Reserve" },
     openMenu: { sq: "Hap menunë", en: "Open menu" },
     closeMenu: { sq: "Mbyll menunë", en: "Close menu" },
     language: { sq: "Gjuha", en: "Language" },
@@ -520,172 +523,111 @@ export const content = {
   },
 
   hero: {
-    eyebrow: { sq: "Kuzhinë Bashkëkohore & Traditë", en: "Contemporary Cuisine & Tradition" },
+    eyebrow: { sq: "Panaja • Vlorë", en: "Panaja • Vlorë" },
     title: {
-      sq: "Një Përvojë *Fine Dining* në Zemër të Natyrës",
-      en: "A *Fine Dining* Experience in the Heart of Nature",
+      sq: "Shija e Vërtetë, *E Përpunuar* me Elegancë",
+      en: "True Flavour, *Crafted* with Elegance",
     },
+    // Maksimumi 12 fjalë.
     subtitle: {
-      sq: "Mish premium në zgarë, peshku i freskët i ditës dhe verëra të përzgjedhura — mes mureve me tulla, drurit natyral dhe kopshtit me ullinj në Panaja.",
-      en: "Premium grilled meats, the day's fresh catch and hand-picked wines — among red-brick walls, natural wood and an olive garden in Panaja.",
+      sq: "Mish i zgjedhur, peshk i Jonit dhe verë, mes ullinjve të Panajës.",
+      en: "Selected meats, Ionian fish and fine wine, among Panaja's olive trees.",
+    },
+    cta: { sq: "Rezervo një Tavolinë", en: "Reserve a Table" },
+    // Statusi "Hapur tani" (shfaqet në footer, poshtë orarit) ({time} dhe {day} zëvendësohen automatikisht).
+    status: {
+      openNow: { sq: "Hapur tani · deri {time}", en: "Open now · until {time}" },
+      opensToday: { sq: "Hapet sot në {time}", en: "Opens today at {time}" },
+      opensTomorrow: { sq: "Mbyllur · hapet nesër në {time}", en: "Closed · opens tomorrow at {time}" },
+      opensOn: { sq: "Mbyllur · hapet {day} në {time}", en: "Closed · opens {day} at {time}" },
     },
   },
 
-  /* Shiriti poshtë Hero-s: tre treguesit kryesorë.
-   * TODO: Përdorni vetëm shifra të vërteta (p.sh. vlerësimi real nga Google). */
-  features: [
-    {
-      icon: "leaf",
-      value: "100%",
-      label: { sq: "Produkte Origjinale", en: "Original Produce" },
-    },
-    {
-      icon: "flame",
-      value: "Premium",
-      label: { sq: "Mish & Zgarë", en: "Meat & Grill" },
-    },
-    {
-      icon: "star",
-      value: "4.9",
-      label: { sq: "Vlerësim nga Miqtë", en: "Guest Rating" },
-    },
-  ] as { icon: FeatureIcon; value: string; label: Localized }[],
+  weekdays: {
+    sq: ["të Dielën", "të Hënën", "të Martën", "të Mërkurën", "të Enjten", "të Premten", "të Shtunën"],
+    en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  },
 
-  story: {
-    eyebrow: { sq: "Historia Jonë", en: "Our Story" },
-    title: {
-      sq: "Tradita e Tullës dhe Drurit në Harmoni me *Elegancën*",
-      en: "The Tradition of Brick and Wood in Harmony with *Elegance*",
+  essence: {
+    eyebrow: { sq: "Thelbi", en: "The Essence" },
+    title: { sq: "Tullë, dru *dhe zjarr*", en: "Brick, wood *and fire*" },
+    text: {
+      sq: "Në Li-Ro gjithçka nis nga zgjedhja e lëndës. Mish i përzgjedhur me kujdes, peshku i freskët i detit Jon dhe produktet e stinës gatuhen thjesht, që shija të flasë vetë — mes mureve me tulla, drurit natyral dhe qetësisë së kopshtit me ullinj.",
+      en: "At Li-Ro, everything begins with the choice of ingredients. Carefully selected meat, fresh fish from the Ionian Sea and seasonal produce are cooked simply, so the flavour speaks for itself — among brick walls, natural wood and the calm of the olive garden.",
     },
-    paragraphs: [
-      {
-        sq: "Taverna Li-Ro lindi nga dëshira për t'i dhënë Panajës një vend ku tradita shqiptare e tryezës takon elegancën e kuzhinës bashkëkohore. Muret me tulla të kuqe, ndriçimi i ngrohtë dhe detajet prej druri natyral krijojnë një atmosferë intime, ku çdo darkë ndihet si një festë.",
-        en: "Taverna Li-Ro was born from a wish to give Panaja a place where the Albanian tradition of the table meets the refinement of contemporary cuisine. Red-brick walls, warm lighting and natural wood create an intimate atmosphere where every dinner feels like a celebration.",
-      },
-      {
-        sq: "Jashtë, kopshti me ullinj ju fton për darka nën qiell të hapur gjatë netëve të ngrohta të Vlorës. Brenda apo jashtë, mikpritja jonë mbetet e njëjtë: e sinqertë, e vëmendshme dhe gjithmonë me buzëqeshje.",
-        en: "Outside, our olive garden invites you to dine under the open sky on warm Vlorë evenings. Indoors or out, our hospitality stays the same: sincere, attentive and always with a smile.",
-      },
+    values: [
+      { sq: "Zgarë & Mish Premium", en: "Grill & Premium Meat" },
+      { sq: "Prodhime Deti të Freskëta", en: "Fresh Seafood" },
+      { sq: "Kantinë Verërash", en: "Wine Cellar" },
     ],
-    cta: { sq: "Zbulo Më Shumë", en: "Discover More" },
-    // TODO: Emri i shefit / themeluesit (shfaqet si firmë kaligrafike).
-    signature: "Li-Ro",
-    signatureRole: { sq: "Themeluesit · Taverna Li-Ro", en: "The Founders · Taverna Li-Ro" },
-    imageBadge: { sq: "Tulla · Dru · Ullinj", en: "Brick · Wood · Olives" },
-    video: {
-      // TODO: Lidhja "embed" e videos (p.sh. https://www.youtube.com/embed/XXXXXXXX).
-      // Kur plotësohet, butoni Play e luan videon në faqe.
-      url: "",
-      play: { sq: "Shiko turin virtual", en: "Watch the virtual tour" },
-      title: { sq: "Turi virtual i Taverna Li-Ro", en: "Taverna Li-Ro virtual tour" },
-      comingSoonTitle: { sq: "Turi virtual vjen *së shpejti*", en: "Virtual tour *coming soon*" },
-      comingSoonText: {
-        sq: "Po përgatisim një video të ambientit tonë. Ndërkohë, shihni momentet e fundit në Instagram.",
-        en: "We're preparing a film of our space. In the meantime, see our latest moments on Instagram.",
-      },
-      instagramCta: { sq: "Shiko në Instagram", en: "See on Instagram" },
-      close: { sq: "Mbyll", en: "Close" },
-    },
   },
 
-  signatureMenu: {
-    eyebrow: { sq: "Signature Menu", en: "Signature Menu" },
-    title: {
-      sq: "Një Përvojë *Kulinare* Përtej të Zakonshmes",
-      en: "A *Culinary* Experience Beyond the Ordinary",
-    },
-    subtitle: {
-      sq: "Katër pjata që tregojnë kush jemi — nga zgara, nga deti dhe nga tradita.",
-      en: "Four dishes that tell you who we are — from the grill, the sea and tradition.",
-    },
-    viewInMenu: { sq: "Shiko në menu", en: "View in menu" },
+  signature: {
+    eyebrow: { sq: "Pjatat e Shtëpisë", en: "Signature" },
+    title: { sq: "Nga zgara, deti *dhe kantina*", en: "From the grill, the sea *and the cellar*" },
   },
 
   menu: {
-    eyebrow: { sq: "Menuja e Plotë", en: "The Full Menu" },
-    title: { sq: "Nga Zgara te *Kantina*", en: "From the Grill to the *Cellar*" },
-    subtitle: {
-      sq: "Pjata të gatuara me produkte të freskëta të stinës.",
-      en: "Dishes prepared with fresh, seasonal produce.",
-    },
+    eyebrow: { sq: "Menuja", en: "The Menu" },
+    title: { sq: "Karta e *Li-Ro*", en: "The *Li-Ro* Card" },
     categoriesLabel: { sq: "Kategoritë e menusë", en: "Menu categories" },
     note: {
-      sq: "Çmimet janë në Lekë (ALL). Për alergjenë, ju lutemi pyesni stafin tonë.",
-      en: "Prices are in Albanian Lek (ALL). Please ask our staff about allergens.",
+      sq: "Çmimet janë në Lekë. Për alergjenë, pyesni stafin tonë.",
+      en: "Prices in Albanian Lek. Please ask our staff about allergens.",
     },
   },
 
   gallery: {
-    eyebrow: { sq: "Galeria", en: "Gallery" },
-    title: { sq: "Atmosfera e *Li-Ro*", en: "The *Li-Ro* Atmosphere" },
-    subtitle: {
-      sq: "Një vështrim te pjatat, ambienti dhe mbrëmjet tona.",
-      en: "A glimpse of our dishes, our space and our evenings.",
-    },
+    eyebrow: { sq: "Atmosfera", en: "Atmosphere" },
+    title: { sq: "Mbrëmjet në *Li-Ro*", en: "Evenings at *Li-Ro*" },
     instagramCta: { sq: "Na ndiqni në Instagram", en: "Follow us on Instagram" },
   },
 
   location: {
     eyebrow: { sq: "Vendndodhja", en: "Location" },
-    title: { sq: "Na Gjeni në *Panajë*", en: "Find Us in *Panaja*" },
-    subtitle: {
+    title: { sq: "Na gjeni në *Panajë*", en: "Find us in *Panaja*" },
+    text: {
       sq: "Pak minuta nga qendra e Vlorës, mes ullinjve dhe qetësisë së Panajës.",
       en: "A few minutes from the centre of Vlorë, among the olive trees and quiet of Panaja.",
     },
     addressLabel: { sq: "Adresa", en: "Address" },
     hoursLabel: { sq: "Orari", en: "Opening hours" },
-    phoneLabel: { sq: "Telefon", en: "Phone" },
-    directions: { sq: "Merr Udhëzimet", en: "Get Directions" },
+    directions: { sq: "Merr udhëzimet", en: "Get directions" },
     openInMaps: { sq: "Hap në Google Maps", en: "Open in Google Maps" },
     mapTitle: { sq: "Harta e vendndodhjes", en: "Location map" },
   },
 
   reservation: {
     eyebrow: { sq: "Rezervimi", en: "Reservations" },
-    title: { sq: "Rezervoni *Tavolinën* Tuaj", en: "Reserve Your *Table*" },
-    subtitle: {
-      sq: "Rezervimet bëhen vetëm me telefon. Na telefononi dhe ne ju gjejmë tavolinën e duhur për mbrëmjen tuaj.",
-      en: "Reservations are taken by phone only. Give us a call and we'll find the right table for your evening.",
+    title: { sq: "Rezervoni *tavolinën* tuaj", en: "Reserve your *table*" },
+    text: {
+      sq: "Rezervimet bëhen vetëm me telefon. Na telefononi ose na shkruani — ju konfirmojmë tavolinën menjëherë.",
+      en: "Reservations are by phone only. Call or message us — we'll confirm your table right away.",
     },
-    groupsNote: {
-      sq: "Për grupe mbi 10 persona, darka private ose evente, na njoftoni gjatë telefonatës.",
-      en: "For groups of more than 10, private dinners or events, just let us know when you call.",
+    phoneLabel: { sq: "Numri i rezervimeve", en: "Reservations line" },
+    copy: { sq: "Kopjo numrin", en: "Copy number" },
+    copied: { sq: "U kopjua", en: "Copied" },
+    // Mënyrat e kontaktit. Fshi një rresht për ta hequr nga faqja.
+    channels: [
+      { id: "call", label: { sq: "Telefono", en: "Call" } },
+      { id: "whatsapp", label: { sq: "WhatsApp", en: "WhatsApp" } },
+      { id: "viber", label: { sq: "Viber", en: "Viber" } },
+      { id: "sms", label: { sq: "Dërgo SMS", en: "Send SMS" } },
+    ] as { id: "call" | "whatsapp" | "viber" | "sms"; label: Localized }[],
+    // Mesazhi i parashkruar për WhatsApp dhe SMS.
+    message: {
+      sq: "Përshëndetje Taverna Li-Ro! Dëshiroj të rezervoj një tavolinë.",
+      en: "Hello Taverna Li-Ro! I'd like to reserve a table.",
     },
-    hoursLabel: { sq: "Orari", en: "Opening hours" },
-    callEyebrow: { sq: "Rezervime me telefon", en: "Book by phone" },
-    callTitle: { sq: "Na *telefononi*", en: "Give us a *call*" },
-    callText: {
-      sq: "Stafi ynë ju konfirmon rezervimin menjëherë gjatë telefonatës.",
-      en: "Our team will confirm your reservation right away, during the call.",
-    },
-    call: { sq: "Telefono tani", en: "Call now" },
-    prepareTitle: {
-      sq: "Që telefonata të jetë e shpejtë, mbani gati:",
-      en: "To keep the call quick, have ready:",
-    },
-    prepare: [
-      { sq: "Datën dhe orën e dëshiruar", en: "Your preferred date and time" },
-      { sq: "Numrin e personave", en: "The number of guests" },
-      {
-        sq: "Preferencën: ambient i brendshëm ose kopshti me ullinj",
-        en: "Seating: indoor dining room or the olive garden",
-      },
-      {
-        sq: "Raste të veçanta: ditëlindje, alergji, karrige për fëmijë",
-        en: "Special requests: birthdays, allergies, high chairs",
-      },
-    ],
-    callHint: { sq: "Telefononi brenda orarit të punës.", en: "Please call during opening hours." },
   },
 
   footer: {
-    tagline: {
-      sq: "Fine dining & zgarë bashkëkohore, mes tullës, drurit dhe ullinjve të Panajës.",
-      en: "Fine dining & contemporary grill among the brick, wood and olive trees of Panaja.",
-    },
-    hoursLabel: { sq: "Orari", en: "Opening hours" },
+    addressLabel: { sq: "Adresa", en: "Address" },
+    hoursLabel: { sq: "Orari", en: "Hours" },
     contactLabel: { sq: "Kontakt", en: "Contact" },
     rights: { sq: "Të gjitha të drejtat e rezervuara.", en: "All rights reserved." },
+    directions: { sq: "Udhëzimet", en: "Directions" },
+    whatsapp: { sq: "WhatsApp", en: "WhatsApp" },
     backToTop: { sq: "Kthehu lart", en: "Back to top" },
   },
 };

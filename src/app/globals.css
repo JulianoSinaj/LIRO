@@ -1,24 +1,16 @@
 @import "tailwindcss";
 
 /* -------------------------------------------------------------------------- */
-/*  Paleta "Obsidian, Champagne Gold, Olive & Bordeaux"                         */
+/*  Paleta — Obsidian, Champagne Gold, Ivory                                   */
 /* -------------------------------------------------------------------------- */
 @theme {
-  --color-ink: #0b0908; /* Deep Obsidian / Espresso Black — sfondi bazë */
-  --color-ink-soft: #120f0c; /* seksione alternative */
-  --color-bronze: #1b1612; /* Smoked Glass / Dark Bronze (përdoret me /72) */
-  --color-gold: #d6b074; /* Warm Champagne Gold */
-  --color-gold-light: #ecd09a;
-  --color-gold-soft: #e2c288; /* fjalët e theksuara në tituj, logoja */
-  --color-gold-deep: #b4843f;
-  --color-amber: #d48c46; /* shkëlqimi atmosferik (LED mbi tulla) */
-  --color-olive: #8f9d62; /* ullinjtë e Panajës — shkëlqim i gjelbër i butë */
-  --color-wine: #8c2f3c; /* Bordeaux — verërat, mbrëmja */
-  --color-ivory: #f8f4ec; /* teksti kryesor */
-  --color-muted: #ada396; /* Warm Stone — teksti sekondar */
+  --color-ink: #0b0908; /* sfondi bazë */
+  --color-ink-soft: #110e0c; /* seksione alternative, mezi e dallueshme */
+  --color-gold: #dfbe82; /* Champagne Gold — thekset */
+  --color-ivory: #f7f3eb; /* teksti kryesor */
+  --color-muted: #a59c90; /* teksti sekondar (kontrast ≈ 7:1 mbi ink) */
   --color-intro: #14100a; /* toni i skajeve të videos intro */
 
-  --animate-dialog-in: dialog-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-intro-in: intro-in 0.6s ease-out both;
 
   @keyframes intro-in {
@@ -26,23 +18,11 @@
       opacity: 0;
     }
   }
-
-  @keyframes dialog-in {
-    from {
-      opacity: 0;
-      transform: translateY(24px) scale(0.97);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
 }
 
 @theme inline {
-  --font-display: var(--font-display-face), "Bodoni 72", "Didot", ui-serif, Georgia, serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", "Garamond", ui-serif, Georgia, serif;
   --font-sans: var(--font-jost), "Futura", ui-sans-serif, system-ui, sans-serif;
-  --font-signature: var(--font-signature-script), cursive;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -58,26 +38,17 @@
   body {
     background-color: var(--color-ink);
     color: var(--color-ivory);
-    font-variant-numeric: lining-nums;
     font-weight: 350;
-    letter-spacing: 0.005em;
+    font-variant-numeric: lining-nums;
   }
 
   section[id],
   footer[id] {
-    scroll-margin-top: 4.5rem;
+    scroll-margin-top: 4rem;
   }
 
-  /* Serif-i i titujve: pak më i trashë se pesha bazë, që vijat e holla të
-     shihen qartë. Klasat font-* (p.sh. font-semibold te logoja) e mbishkruajnë. */
   .font-display {
-    font-weight: 500;
-  }
-
-  /* Titujt e mëdhenj: `opsz` i kufizuar — kontrast i lartë, por vijat e holla
-     mbeten të dukshme edhe në ekranet jo-retina. */
-  :is(h1, h2, h3).font-display {
-    font-variation-settings: "opsz" 24;
+    font-weight: 400;
   }
 
   ::selection {
@@ -86,143 +57,22 @@
   }
 
   :focus-visible {
-    outline: 1.5px solid var(--color-gold);
-    outline-offset: 3px;
+    outline: 1px solid var(--color-gold);
+    outline-offset: 4px;
   }
-}
 
-/* -------------------------------------------------------------------------- */
-/*  Ari metalik, xhami i tymosur, drita                                        */
-/* -------------------------------------------------------------------------- */
-
-/* Gradienti metalik i butonave kryesorë */
-@utility bg-gold-gradient {
-  background-image: linear-gradient(135deg, #f2d9a4 0%, #d6ac66 48%, #a9773a 100%);
-}
-
-/* Tekst me shkëlqim ari — fjalët e theksuara në tituj */
-@utility text-gold-gradient {
-  background-image: linear-gradient(
-    105deg,
-    #f9e8c2 0%,
-    #ebc887 28%,
-    #d3a15d 55%,
-    #f1d8a4 78%,
-    #dcb071 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-
-/* Fildish perlë — nuancë e ngrohtë metalike në titujt, si dritë që bie nga lart */
-@utility text-pearl {
-  background-image: linear-gradient(180deg, #fffaf2 20%, #ead8b6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-
-/* Italic + gradient: zgjeron zonën e pikturimit që shkronjat e pjerrëta të mos priten */
-@utility italic-bleed {
-  padding-inline: 0.12em;
-  margin-inline: -0.12em;
-}
-
-/* Smoked Glass / Dark Bronze */
-@utility glass {
-  background-color: rgb(26 21 17 / 0.72);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  backdrop-filter: blur(24px) saturate(140%);
-  border: 1px solid rgb(212 175 114 / 0.22);
-}
-
-/* Shkëlqim qelibari (si drita LED e ngrohtë mbi tulla) */
-@utility glow-amber {
-  background-image: radial-gradient(closest-side, rgb(212 140 70 / 0.16), transparent);
-}
-
-/* Shkëlqim ulliri — natyra e Panajës */
-@utility glow-olive {
-  background-image: radial-gradient(closest-side, rgb(143 157 98 / 0.14), transparent);
-}
-
-/* Shkëlqim bordo — vera, mbrëmja */
-@utility glow-wine {
-  background-image: radial-gradient(closest-side, rgb(140 47 60 / 0.2), transparent);
-}
-
-/* Unaza e kufirit për ShimmerBorder: shfaq vetëm "padding"-un (1px) */
-@utility mask-ring {
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box exclude,
-    linear-gradient(#000 0 0);
-}
-
-/* Pika të arta ndarëse në menu */
-@utility leader-dots {
-  background-image: radial-gradient(circle, rgb(212 175 114 / 0.5) 0.8px, transparent 1.3px);
-  background-size: 7px 3px;
-  background-repeat: repeat-x;
-  background-position: left bottom;
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Tekstura                                                                   */
-/* -------------------------------------------------------------------------- */
-
-/* Kokrrizë filmi mbi të gjithë faqen — i jep thellësi të zezës */
-.grain::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.06;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* Muri me tulla, i ndriçuar vetëm aty ku bien "dritat LED" nga lart */
-.brick-lit {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='36'%3E%3Cpath d='M0 .5h88M0 18.5h88M44.5 0v18M.5 18v18' stroke='%23d4af72' stroke-opacity='.11' fill='none'/%3E%3C/svg%3E");
-  -webkit-mask-image:
-    radial-gradient(ellipse 20% 75% at 12% 0%, #000 0%, transparent 100%),
-    radial-gradient(ellipse 20% 75% at 50% 0%, #000 0%, transparent 100%),
-    radial-gradient(ellipse 20% 75% at 88% 0%, #000 0%, transparent 100%);
-  mask-image:
-    radial-gradient(ellipse 20% 75% at 12% 0%, #000 0%, transparent 100%),
-    radial-gradient(ellipse 20% 75% at 50% 0%, #000 0%, transparent 100%),
-    radial-gradient(ellipse 20% 75% at 88% 0%, #000 0%, transparent 100%);
-}
-
-/* Konet e dritës LED (wall-washer) mbi muret */
-.led-wash {
-  background-image:
-    radial-gradient(ellipse 20% 75% at 12% 0%, rgb(212 140 70 / 0.14), transparent),
-    radial-gradient(ellipse 20% 75% at 50% 0%, rgb(212 140 70 / 0.1), transparent),
-    radial-gradient(ellipse 20% 75% at 88% 0%, rgb(212 140 70 / 0.14), transparent);
-}
-
-.no-scrollbar {
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+  /* Fushat e formës: lista e opsioneve në sfond të errët */
+  option {
+    background-color: var(--color-ink);
+    color: var(--color-ivory);
+  }
 }
 
 /* Fushat e datës: ikona e kalendarit në ngjyrë ari */
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  opacity: 0.75;
-  filter: invert(76%) sepia(30%) saturate(520%) hue-rotate(358deg) brightness(92%);
+  opacity: 0.6;
+  filter: invert(80%) sepia(30%) saturate(420%) hue-rotate(358deg);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -339,4 +189,66 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Intro kinematik: fshihet para hidratimit nëse është luajtur në këtë sesion. */
 html[data-intro-played] [data-cinematic-intro] {
   display: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Footer — drita e zjarrit + shkëlqimi i emrit LI-RO                        */
+/* -------------------------------------------------------------------------- */
+@layer components {
+  .fireglow {
+    pointer-events: none;
+    background: radial-gradient(
+      60% 55% at 50% 100%,
+      rgb(214 128 52 / 0.22),
+      rgb(223 190 130 / 0.06) 55%,
+      transparent 80%
+    );
+    mix-blend-mode: screen;
+    transform-origin: bottom;
+    animation: fire-breathe 7s ease-in-out infinite alternate;
+  }
+
+  /* Drita kalon ngadalë mbi shkronjat e arit, një nga një. */
+  .wordmark-letter {
+    display: inline-block;
+    color: transparent;
+    background: linear-gradient(
+      110deg,
+      var(--color-gold) 0%,
+      var(--color-gold) 40%,
+      #fff1cf 50%,
+      var(--color-gold) 60%,
+      var(--color-gold) 100%
+    );
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: letter-shine 7s ease-in-out infinite;
+  }
+
+  @keyframes letter-shine {
+    0%,
+    55% {
+      background-position: 100% 0;
+    }
+    85%,
+    100% {
+      background-position: 0% 0;
+    }
+  }
+
+  @keyframes fire-breathe {
+    0% {
+      opacity: 0.55;
+      transform: scaleY(0.96);
+    }
+    45% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 1;
+      transform: scaleY(1.04);
+    }
+  }
 }

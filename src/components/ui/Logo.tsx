@@ -1,5 +1,4 @@
 import { useId } from "react";
-import { restaurant } from "@/data/restaurantData";
 import { cn } from "@/lib/cn";
 
 /**
@@ -61,36 +60,24 @@ type LogoProps = {
   size?: "md" | "lg";
 };
 
-/** Logoja e plotë: ikona + "TAVERNA LI-RO" + "PANAJA • VLORË". */
+/** Logoja e plotë: ikona + "TAVERNA LI-RO". */
 export function Logo({ className, size = "md" }: LogoProps) {
   const lg = size === "lg";
   return (
     <span className={cn("inline-flex items-center gap-2.5 sm:gap-3", className)}>
       <LogoMark className={cn("shrink-0", lg ? "size-14" : "size-9 sm:size-11")} />
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-display font-semibold whitespace-nowrap text-ivory uppercase",
-            lg
-              ? "text-[1.7rem] tracking-[0.14em]"
-              : "text-[1.05rem] tracking-[0.1em] sm:text-[1.35rem] sm:tracking-[0.12em]",
-          )}
-        >
-          Taverna{" "}
-          <span className="text-gold-soft">
-            {/* Viza e Bodoni-t është shumë e hollë — përdorim vizën e Jost-it */}
-            Li<span className="font-sans font-medium">-</span>Ro
-          </span>
-        </span>
-        <span
-          className={cn(
-            "mt-1.5 font-sans font-medium whitespace-nowrap text-gold/75 uppercase",
-            lg
-              ? "text-[11px] tracking-[0.42em]"
-              : "text-[8.5px] tracking-[0.34em] sm:text-[9px] sm:tracking-[0.38em]",
-          )}
-        >
-          {restaurant.location}
+      <span
+        className={cn(
+          "font-display leading-none font-semibold whitespace-nowrap text-ivory uppercase",
+          lg
+            ? "text-[1.7rem] tracking-[0.14em]"
+            : "text-[1.05rem] tracking-[0.1em] sm:text-[1.35rem] sm:tracking-[0.12em]",
+        )}
+      >
+        Taverna{" "}
+        <span className="text-gold">
+          {/* Viza e Bodoni-t është shumë e hollë — përdorim vizën e Jost-it */}
+          Li<span className="font-sans font-medium">-</span>Ro
         </span>
       </span>
     </span>
