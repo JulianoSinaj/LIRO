@@ -116,31 +116,81 @@ export const images = {
   },
 } satisfies Record<string, Photo>;
 
-/* Galeria e atmosferës — saktësisht 3 foto, radha përcakton formën:
- *   1. panoramike (e gjerë)  ·  2. horizontale  ·  3. vertikale              */
-export const gallery: (Photo & { caption: Localized })[] = [
+/* Galeria e atmosferës — fotot reale nga /public/images/atmosfera-web (2400px, ~450 KB).
+ * Të gjitha janë vertikale (2:3). `featured: true` = shfaqen direkt në seksion
+ * (4 të parat me këtë shenjë); të tjerat shihen te "Shiko të gjitha".      */
+export type GalleryPhoto = Photo & { caption: Localized; featured?: boolean };
+
+const atm = (n: number) => `/images/atmosfera-web/atm${n}.jpeg`;
+
+export const gallery: GalleryPhoto[] = [
   {
-    // TODO: vendos këtu një foto panoramike reale të kopshtit me ullinj
-    // (p.sh. "/images/kopshti.jpg") dhe ndrysho titullin në "Kopshti me ullinj".
-    src: unsplash("1560053608-13721e0d69e8", 2400),
+    src: atm(1),
+    featured: true,
     alt: {
-      sq: "Salla e restorantit me tavolina të shtruara nën dritë qelibari",
-      en: "The dining room with set tables in amber light",
+      sq: "Tavolinë e shtruar pranë murit me tulla, ndriçuar nga drita e ngrohtë",
+      en: "A set table by the brick wall in warm light",
     },
-    caption: { sq: "Darka në dritë qelibari", en: "Dinner in amber light" },
+    caption: { sq: "Salla", en: "The dining room" },
   },
   {
-    src: unsplash("1529692236671-f1f6cf9683ba", 1600),
-    alt: { sq: "Biftek viçi i prerë me pirun", en: "Sliced beef steak with a fork" },
+    src: atm(9),
+    featured: true,
+    alt: {
+      sq: "Dy gota verë e kuqe ngrihen për dolli mbi tavolinë me mish të pjekur",
+      en: "Two glasses of red wine raised for a toast over grilled meat",
+    },
+    caption: { sq: "Gëzuar", en: "Cheers" },
+  },
+  {
+    src: atm(3),
+    featured: true,
+    alt: {
+      sq: "Biftek me kockë mbi pjatë gize, sallatë dhe verë në mbrëmje",
+      en: "Bone-in steak on a cast-iron plate with salad and wine at night",
+    },
     caption: { sq: "Nga zgara", en: "From the grill" },
   },
   {
-    src: unsplash("1553361371-9b22f78e8b1d", 1200),
+    src: atm(8),
+    featured: true,
     alt: {
-      sq: "Verë e kuqe duke u hedhur në gotë, pranë mishit të pjekur",
-      en: "Red wine poured into a glass beside roasted meat",
+      sq: "Tavolinë me mish, sallatë dhe verë, mes gjelbërimit",
+      en: "A table of meat, salad and wine framed by greenery",
     },
-    caption: { sq: "Verë & mish", en: "Wine & meat" },
+    caption: { sq: "Mes gjelbërimit", en: "Among the greenery" },
+  },
+  {
+    src: atm(2),
+    alt: {
+      sq: "Mysafirë duke prerë biftekun në tavolinë druri",
+      en: "Guests cutting into steak at a wooden table",
+    },
+    caption: { sq: "Në tavolinë", en: "At the table" },
+  },
+  {
+    src: atm(4),
+    alt: {
+      sq: "Pamje nga sipër: pjatë gize me biftek, sallatë dhe verë e kuqe",
+      en: "From above: cast-iron steak platter, salad and red wine",
+    },
+    caption: { sq: "Darka e shtruar", en: "Dinner is served" },
+  },
+  {
+    src: atm(6),
+    alt: {
+      sq: "Tavolinë me verë dhe mish pranë murit me tulla të ndriçuar",
+      en: "Wine and meat on a table beside the lit brick wall",
+    },
+    caption: { sq: "Tulla & dritë", en: "Brick & light" },
+  },
+  {
+    src: atm(7),
+    alt: {
+      sq: "Salla e qetë me drita qelibari dhe tavolina të shtruara",
+      en: "The quiet dining room with amber lights and set tables",
+    },
+    caption: { sq: "Para darkës", en: "Before dinner" },
   },
 ];
 
@@ -260,10 +310,8 @@ export const menu: MenuCategory[] = [
         price: 1500,
       },
       {
-        name: {
-          sq: "Zog në tavë saçi",
-          en: "Chicken with rice or pasta (cooked in a traditional way)",
-        },
+        name: { sq: "Zog në tavë saçi", en: "Traditional baked chicken" },
+        description: { sq: "Me oriz ose makarona", en: "With rice or pasta" },
         price: 1700,
       },
       {
@@ -444,7 +492,7 @@ export const menuTabs: { id: string; label: Localized; categories: string[] }[] 
   { id: "antipasta", label: { sq: "Antipasta", en: "Starters" }, categories: ["antipasta", "sallata"] },
   { id: "mish", label: { sq: "Mish & Zgarë", en: "Meat & Grill" }, categories: ["mish"] },
   { id: "peshk", label: { sq: "Peshk & Deti", en: "Fish & Sea" }, categories: ["peshk"] },
-  { id: "vera", label: { sq: "Verëra", en: "Wines" }, categories: ["vera", "birra", "freskuese"] },
+  { id: "vera", label: { sq: "Pije", en: "Drinks" }, categories: ["vera", "birra", "freskuese"] },
   { id: "embelsira", label: { sq: "Embëlsira", en: "Desserts" }, categories: ["embelsira"] },
 ];
 
@@ -581,6 +629,14 @@ export const content = {
     eyebrow: { sq: "Atmosfera", en: "Atmosphere" },
     title: { sq: "Mbrëmjet në *Li-Ro*", en: "Evenings at *Li-Ro*" },
     instagramCta: { sq: "Na ndiqni në Instagram", en: "Follow us on Instagram" },
+    viewAll: { sq: "Shiko të gjitha", en: "View all" },
+    photos: { sq: "foto", en: "photos" },
+    more: { sq: "Më shumë", en: "More" },
+    open: { sq: "Hap foton", en: "Open photo" },
+    close: { sq: "Mbyll", en: "Close" },
+    back: { sq: "Kthehu te galeria", en: "Back to gallery" },
+    prev: { sq: "Fotoja e mëparshme", en: "Previous photo" },
+    next: { sq: "Fotoja tjetër", en: "Next photo" },
   },
 
   location: {

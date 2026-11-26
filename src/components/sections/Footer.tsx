@@ -43,7 +43,7 @@ export function Footer() {
   return (
     <footer
       id="contact"
-      className="relative isolate overflow-hidden border-t border-gold/15 px-6 pt-20 pb-8 sm:px-10 lg:pt-24"
+      className="relative isolate overflow-hidden border-t border-gold/15 px-6 pt-20 pb-8 sm:px-16 lg:px-28 xl:px-40 lg:pt-24"
     >
       {/* Zjarri: dritë e ngrohtë që merr frymë nga poshtë + shkëndija që ngjiten */}
       <motion.div

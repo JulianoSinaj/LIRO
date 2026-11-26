@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { content, currencySuffix, signatureDishes } from "@/data/restaurantData";
+import { content, signatureDishes } from "@/data/restaurantData";
 import { cn } from "@/lib/cn";
 import { useLanguage } from "../LanguageProvider";
 import { FadeUp } from "../motion/FadeUp";
-import { formatPrice, SectionHeading } from "../ui/Typography";
+import { SectionHeading } from "../ui/Typography";
 
 /** Tre pjata të ekspozuara si në galeri arti — pa kuti, vetëm foto dhe tipografi. */
 export function SignatureDishes() {
@@ -13,17 +13,17 @@ export function SignatureDishes() {
   const s = content.signature;
 
   return (
-    <section id="signature" className="border-t border-gold/15 px-6 py-32 sm:px-10 lg:py-48">
-      <div className="mx-auto max-w-[90rem]">
+    <section id="signature" className="border-t border-gold/15 px-6 py-16 sm:px-16 sm:py-20 lg:px-28 lg:py-24 xl:px-40">
+      <div className="mx-auto max-w-[68rem]">
         <SectionHeading eyebrow={t(s.eyebrow)} title={t(s.title)} className="max-w-3xl" />
 
-        <div className="mt-20 grid gap-20 md:grid-cols-3 md:gap-12 lg:mt-28">
+        <div className="mt-12 grid gap-14 md:grid-cols-3 md:gap-12 lg:mt-16">
           {signatureDishes.map((dish, i) => (
             <FadeUp
               as="article"
               key={dish.id}
               delay={i * 0.12}
-              className={cn(i === 1 && "md:mt-24")}
+              className={cn(i === 1 && "md:mt-16")}
             >
               <div className="group relative aspect-[3/4] overflow-hidden bg-ink-soft">
                 <Image
@@ -38,9 +38,6 @@ export function SignatureDishes() {
                 {t(dish.name)}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-muted">{t(dish.description)}</p>
-              <p className="mt-5 text-xs tracking-[0.2em] text-gold">
-                {formatPrice(dish.price, currencySuffix)}
-              </p>
             </FadeUp>
           ))}
         </div>

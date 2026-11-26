@@ -186,6 +186,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Menuja — pikat udhëzuese mes emrit dhe çmimit (si në kartat e shtypura)   */
+/* -------------------------------------------------------------------------- */
+@layer components {
+  .menu-leader {
+    height: 1px;
+    background-image: linear-gradient(to right, rgb(223 190 130 / 0.45) 1px, transparent 1px);
+    background-size: 5px 1px;
+    background-repeat: repeat-x;
+  }
+}
+
 /* Intro kinematik: fshihet para hidratimit nëse është luajtur në këtë sesion. */
 html[data-intro-played] [data-cinematic-intro] {
   display: none;

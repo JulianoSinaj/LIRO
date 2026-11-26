@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion, type Transition, type Variants } from "framer-motion";
 import {
   Check,
   Copy,
@@ -14,8 +15,10 @@ import { content, openingHours, restaurant } from "@/data/restaurantData";
 import { cn } from "@/lib/cn";
 import { useLanguage } from "../LanguageProvider";
 import { FadeUp } from "../motion/FadeUp";
+import { useMagnetic } from "../motion/useMagnetic";
 import { Arrow } from "../ui/Button";
 import { AccentText, Eyebrow } from "../ui/Typography";
+import { OpenStatus } from "./OpenStatus";
 
 /* -------------------------------------------------------------------------- */
 /*  Rezervimi — vetëm me telefon: thirrje, WhatsApp, Viber, SMS               */
@@ -29,6 +32,9 @@ const icons: Record<ChannelId, LucideIcon> = {
   viber: MessageCircleMore,
   sms: MessageSquareText,
 };
+
+/** Susta e përbashkët për mbushjet dhe rrotullimin e shifrave. */
+const SPRING: Transition = { type: "spring", stiffness: 260, damping: 28, mass: 0.6 };
 
 /** Lidhja për secilin kanal, me mesazhin e parashkruar ku mbështetet. */
 function channelHref(id: ChannelId, message: string) {
@@ -54,25 +60,9 @@ export function Reservation() {
   const { phoneDisplay, phoneHref } = restaurant.contact;
   const message = t(r.message);
 
-  const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    if (!copied) return;
-    const id = setTimeout(() => setCopied(false), 2000);
-    return () => clearTimeout(id);
-  }, [copied]);
-
-  const copyNumber = async () => {
-    try {
-      await navigator.clipboard.writeText(phoneDisplay);
-      setCopied(true);
-    } catch {
-      /* Clipboard i bllokuar — numri mbetet i dukshëm për t'u kopjuar me dorë. */
-    }
-  };
-
   return (
-    <section id="reservation" className="border-t border-gold/15 bg-ink-soft px-6 py-32 sm:px-10 lg:py-48">
-      <div className="mx-auto grid max-w-[90rem] gap-20 lg:grid-cols-12 lg:gap-0">
+    <section id="reservation" className="border-t border-gold/15 bg-ink-soft px-6 py-16 sm:px-16 sm:py-20 lg:px-28 lg:py-24 xl:px-40">
+      <div className="mx-auto grid max-w-[68rem] gap-12 lg:grid-cols-12 lg:gap-0">
         <FadeUp className="lg:col-span-4">
           <Eyebrow>{t(r.eyebrow)}</Eyebrow>
           <h2 className="mt-6 font-display text-[2.6rem] leading-[1.05] font-light text-balance sm:text-6xl">
@@ -92,61 +82,212 @@ export function Reservation() {
 
         <FadeUp delay={0.1} className="lg:col-span-7 lg:col-start-6">
           {/* Numri */}
-          <p className="text-[11px] tracking-[0.25em] text-muted uppercase">{t(r.phoneLabel)}</p>
-          <div className="mt-4 flex flex-wrap items-end gap-x-8 gap-y-4 border-b border-gold/25 pb-8">
-            <a
-              href={phoneHref}
-              className="font-display text-[2.4rem] leading-none font-light whitespace-nowrap text-ivory transition-colors duration-500 hover:text-gold sm:text-6xl lg:text-7xl"
-            >
-              {phoneDisplay}
-            </a>
-            <button
-              type="button"
-              onClick={copyNumber}
-              className="inline-flex items-center gap-2 pb-1 text-[11px] tracking-[0.25em] text-muted uppercase transition-colors duration-500 hover:text-gold"
-            >
-              {copied ? (
-                <Check className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
-              ) : (
-                <Copy className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
-              )}
-              <span aria-live="polite">{t(copied ? r.copied : r.copy)}</span>
-            </button>
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[11px] tracking-[0.25em] uppercase">
+            <p className="flex items-center gap-4 text-muted">
+              <span aria-hidden="true" className="h-px w-8 bg-gold/50" />
+              {t(r.phoneLabel)}
+            </p>
+            <OpenStatus className="text-gold/80" />
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 border-b border-gold/25 pb-9">
+            <PhoneNumber display={phoneDisplay} href={phoneHref} />
+            <CopyButton value={phoneDisplay} label={t(r.copy)} doneLabel={t(r.copied)} />
           </div>
 
           {/* Kanalet */}
           <ul className="grid sm:grid-cols-2">
-            {r.channels.map(({ id, label }, i) => {
-              const Icon = icons[id];
-              const external = id === "whatsapp";
-              return (
-                <li
-                  key={id}
-                  className={cn(
-                    "border-b border-gold/15",
-                    i % 2 === 0 && "sm:border-r sm:pr-8",
-                    i % 2 === 1 && "sm:pl-8",
-                  )}
-                >
-                  <a
-                    href={channelHref(id, message)}
-                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className="group flex items-center gap-5 py-7 transition-colors duration-500"
-                  >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-gold/30 text-gold transition-colors duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
-                      <Icon className="size-[18px]" strokeWidth={1.25} aria-hidden="true" />
-                    </span>
-                    <span className="flex-1 font-display text-2xl text-ivory transition-colors duration-500 group-hover:text-gold">
-                      {t(label)}
-                    </span>
-                    <Arrow className="text-gold/50 group-hover:text-gold" />
-                  </a>
-                </li>
-              );
-            })}
+            {r.channels.map(({ id, label }, i) => (
+              <ChannelLink
+                key={id}
+                id={id}
+                label={t(label)}
+                href={channelHref(id, message)}
+                side={i % 2 === 0 ? "left" : "right"}
+              />
+            ))}
           </ul>
         </FadeUp>
       </div>
     </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Numri — çdo shifër rrotullohet në ar gjatë hover-it, një nga një          */
+/* -------------------------------------------------------------------------- */
+
+const roll: Variants = { rest: { y: "0%" }, hover: { y: "-100%" } };
+
+function PhoneNumber({ display, href }: { display: string; href: string }) {
+  const groups = display.split(" ");
+  // Indeksi i parë i çdo grupi — për vonesën e shkallëzuar të shifrave.
+  const starts = groups.map((_, gi) => groups.slice(0, gi).join("").length);
+
+  return (
+    <motion.a
+      href={href}
+      aria-label={display}
+      initial="rest"
+      animate="rest"
+      whileHover="hover"
+      whileFocus="hover"
+      whileTap={{ scale: 0.97 }}
+      className="inline-flex font-display font-light text-ivory lining-nums tabular-nums will-change-transform"
+    >
+      <span
+        aria-hidden="true"
+        className="flex gap-[0.3em] text-[2.1rem] leading-[1.15] tracking-[0.01em] sm:text-[2.6rem] lg:text-[2.75rem]"
+      >
+        {groups.map((group, gi) => (
+          <span key={gi} className="flex">
+            {[...group].map((char, ci) => (
+              <span key={ci} className="relative block overflow-hidden">
+                <motion.span
+                  className="block"
+                  variants={roll}
+                  transition={{ ...SPRING, delay: (starts[gi] + ci) * 0.025 }}
+                >
+                  {char}
+                  <span className="absolute inset-x-0 top-full text-gold">{char}</span>
+                </motion.span>
+              </span>
+            ))}
+          </span>
+        ))}
+      </span>
+    </motion.a>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Kopjo numrin — buton magnetik, etiketa me gjerësi fikse (pa layout shift) */
+/* -------------------------------------------------------------------------- */
+
+function CopyButton({ value, label, doneLabel }: { value: string; label: string; doneLabel: string }) {
+  const [copied, setCopied] = useState(false);
+  const { style, handlers } = useMagnetic(4);
+
+  useEffect(() => {
+    if (!copied) return;
+    const id = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(id);
+  }, [copied]);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+    } catch {
+      /* Clipboard i bllokuar — numri mbetet i dukshëm për t'u kopjuar me dorë. */
+    }
+  };
+
+  return (
+    <motion.button
+      type="button"
+      onClick={copy}
+      aria-label={label}
+      {...handlers}
+      style={style}
+      whileTap={{ scale: 0.96 }}
+      className="inline-flex items-center gap-2.5 rounded-full border border-gold/25 py-2.5 pr-5 pl-4 text-[10px] tracking-[0.25em] text-muted uppercase transition-colors duration-500 will-change-transform hover:border-gold/70 hover:text-gold"
+    >
+      <span aria-hidden="true" className="relative size-3.5">
+        <AnimatePresence initial={false}>
+          <motion.span
+            key={copied ? "done" : "copy"}
+            className="absolute inset-0 text-gold"
+            initial={{ opacity: 0, scale: 0.4, rotate: -60 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.4, rotate: 60 }}
+            transition={SPRING}
+          >
+            {copied ? (
+              <Check className="size-3.5" strokeWidth={1.5} />
+            ) : (
+              <Copy className="size-3.5" strokeWidth={1.5} />
+            )}
+          </motion.span>
+        </AnimatePresence>
+      </span>
+      {/* Të dyja etiketat zënë të njëjtën qelizë — gjerësia nuk ndryshon kurrë. */}
+      <span aria-hidden="true" className="grid">
+        <span className={cn("col-start-1 row-start-1 transition-opacity duration-300", copied && "opacity-0")}>
+          {label}
+        </span>
+        <span className={cn("col-start-1 row-start-1 text-gold transition-opacity duration-300", !copied && "opacity-0")}>
+          {doneLabel}
+        </span>
+      </span>
+      <span className="sr-only" aria-live="polite">
+        {copied ? doneLabel : ""}
+      </span>
+    </motion.button>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Kanali — ikona magnetike mbushet me ar, vija poshtë mbushet nga e majta   */
+/* -------------------------------------------------------------------------- */
+
+const fill: Variants = { rest: { scale: 0 }, hover: { scale: 1 } };
+const underline: Variants = { rest: { scaleX: 0 }, hover: { scaleX: 1 } };
+
+function ChannelLink({
+  id,
+  label,
+  href,
+  side,
+}: {
+  id: ChannelId;
+  label: string;
+  href: string;
+  side: "left" | "right";
+}) {
+  const Icon = icons[id];
+  const external = id === "whatsapp";
+  const { style, handlers } = useMagnetic(5);
+
+  return (
+    <li className={cn("border-b border-gold/15", side === "left" && "sm:border-r")}>
+      <motion.a
+        href={href}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...handlers}
+        initial="rest"
+        animate="rest"
+        whileHover="hover"
+        whileFocus="hover"
+        whileTap={{ scale: 0.98 }}
+        className={cn(
+          "group relative flex items-center gap-5 py-6 will-change-transform",
+          side === "left" ? "sm:pr-8" : "sm:pl-8",
+        )}
+      >
+        <motion.span
+          style={style}
+          className="relative flex size-11 shrink-0 items-center justify-center rounded-full border border-gold/30 text-gold transition-colors duration-500 will-change-transform group-hover:border-gold group-hover:text-ink"
+        >
+          <motion.span
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full bg-gold"
+            variants={fill}
+            transition={SPRING}
+          />
+          <Icon className="relative size-[17px]" strokeWidth={1.25} aria-hidden="true" />
+        </motion.span>
+        <span className="flex-1 font-display text-[1.4rem] text-ivory transition-colors duration-500 group-hover:text-gold">
+          {label}
+        </span>
+        <Arrow className="text-gold/50 group-hover:text-gold" />
+        <motion.span
+          aria-hidden="true"
+          className="absolute inset-x-0 -bottom-px h-px origin-left bg-gold/70"
+          variants={underline}
+          transition={SPRING}
+        />
+      </motion.a>
+    </li>
   );
 }

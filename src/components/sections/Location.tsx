@@ -30,8 +30,8 @@ export function Location() {
   ];
 
   return (
-    <section id="location" className="border-t border-gold/15 px-6 py-32 sm:px-10 lg:py-48">
-      <div className="mx-auto grid max-w-[90rem] gap-20 lg:grid-cols-12 lg:items-center lg:gap-0">
+    <section id="location" className="border-t border-gold/15 px-6 py-16 sm:px-16 sm:py-20 lg:px-28 lg:py-24 xl:px-40">
+      <div className="mx-auto grid max-w-[68rem] gap-12 lg:grid-cols-12 lg:items-center lg:gap-0">
         {/* Informacioni */}
         <div className="lg:col-span-4">
           <SectionHeading eyebrow={t(l.eyebrow)} title={t(l.title)} />
@@ -101,13 +101,6 @@ export function Location() {
 
               {/* Pin-i i restorantit — qendra e hartës = vendndodhja */}
               <div aria-hidden="true" className="pointer-events-none absolute top-1/2 left-1/2 size-0">
-                {/* Etiketa mbi pikë — mbulon edhe pin-in e kuq të Google */}
-                <div className="absolute bottom-3 left-0 -translate-x-1/2 border border-gold/40 bg-ink/90 px-5 py-3 text-center whitespace-nowrap backdrop-blur-sm">
-                  <p className="font-display text-lg leading-none text-ivory">{restaurant.name}</p>
-                  <p className="mt-2 text-[10px] tracking-[0.25em] text-gold uppercase">
-                    {restaurant.location}
-                  </p>
-                </div>
                 {/* Pika — saktësisht në qendër të hartës */}
                 <span className="absolute top-0 left-0 flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center">
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-gold/60" />
