@@ -694,5 +694,6 @@ export const content = {
     directions: { sq: "Udhëzimet", en: "Directions" },
     whatsapp: { sq: "WhatsApp", en: "WhatsApp" },
     backToTop: { sq: "Kthehu lart", en: "Back to top" },
+    credit: { sq: "Designed & Built by", en: "Designed & Built by" },
   },
 };

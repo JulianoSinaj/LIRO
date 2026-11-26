@@ -7,7 +7,10 @@ import { content, openingHours, restaurant } from "@/data/restaurantData";
 import { EASE_LUXE } from "@/lib/motion";
 import { Embers } from "../motion/Embers";
 import { useLanguage } from "../LanguageProvider";
+import { useMagnetic } from "../motion/useMagnetic";
 import { OpenStatus } from "./OpenStatus";
+
+const CREDIT = { name: "Juliano Sinaj", url: "https://thelinktree.com/julianosinaj" };
 
 /* Viti aktual — lexohet vetëm në klient (faqja është statike). */
 const noopSubscribe = () => () => {};
@@ -39,6 +42,7 @@ export function Footer() {
   const f = content.footer;
   const year = useYear();
   const { contact, social, map } = restaurant;
+  const magnet = useMagnetic(4);
 
   return (
     <footer
@@ -131,7 +135,12 @@ export function Footer() {
           </motion.div>
         </div>
 
-        <motion.div {...rise(0.7)} className="mt-16 flex flex-col items-center gap-4">
+        {/* Blloku i fundit: pa margjinë negative, ndryshe në fund të faqes nuk arrin kurrë zonën e shfaqjes */}
+        <motion.div
+          {...rise(0.7)}
+          viewport={{ once: true, amount: 0 }}
+          className="mt-16 flex flex-col items-center gap-4"
+        >
           <a
             href="#top"
             className="group inline-flex items-center gap-2 text-[11px] tracking-[0.25em] text-white/80 uppercase transition-colors duration-300 hover:text-gold"
@@ -145,6 +154,25 @@ export function Footer() {
           </a>
           <p className="text-[11px] tracking-[0.15em] text-white/55">
             © {year ?? ""} {restaurant.name}. {t(f.rights)}
+          </p>
+          {/* Kredia e zhvilluesit: e zbehtë, me tërheqje magnetike dhe vijë ari që mbushet në hover */}
+          <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+            {t(f.credit)}{" "}
+            <motion.a
+              href={CREDIT.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={magnet.style}
+              {...magnet.handlers}
+              whileTap={{ scale: 0.96 }}
+              className="group relative inline-block py-1 text-white/70 transition-colors duration-500 will-change-transform hover:text-gold"
+            >
+              {CREDIT.name}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0.5 h-px origin-left scale-x-0 bg-gold transition-transform duration-500 ease-out group-hover:scale-x-100"
+              />
+            </motion.a>
           </p>
         </motion.div>
       </div>
