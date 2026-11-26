@@ -507,10 +507,11 @@ export const signatureDishes: {
   {
     id: "fiorentina",
     image: {
-      src: unsplash("1594041680534-e8c8cdebd659", 1000),
+      /* Foto reale, versioni për web (1600px, ~350 KB). */
+      src: "/images/fiorentina1-web.jpeg",
       alt: {
-        sq: "Biftek viçi në zgarë me patate, në tigan gize",
-        en: "Grilled beef steak with potatoes in a cast-iron pan",
+        sq: "Fiorentina e prerë në feta me rozmarinë, në pjatë gize me kripë deti",
+        en: "Sliced Fiorentina with rosemary on a cast-iron platter with sea salt",
       },
     },
     name: { sq: "Fiorentina", en: "Fiorentina" },
@@ -523,8 +524,12 @@ export const signatureDishes: {
   {
     id: "peshk",
     image: {
-      src: unsplash("1611171711912-e3f6b536f532", 1000),
-      alt: { sq: "Peshk i plotë në zgarë me limon", en: "Whole grilled fish with lemon" },
+      /* Foto reale, versioni për web (1600px, ~280 KB). */
+      src: "/images/peshku-web.jpeg",
+      alt: {
+        sq: "Koçë e plotë në zgarë me limon, në pjatë në formë peshku",
+        en: "Whole grilled sea bream with lemon on a fish-shaped platter",
+      },
     },
     name: { sq: "Koçë në Zgarë", en: "Grilled Sea Bream" },
     description: {
@@ -536,8 +541,12 @@ export const signatureDishes: {
   {
     id: "vera-liro",
     image: {
-      src: unsplash("1568213816046-0ee1c42bd559", 1000),
-      alt: { sq: "Gota vere mbi një fuçi druri", en: "Wine glasses on an oak barrel" },
+      /* Foto reale, versioni për web (1600px, ~230 KB). */
+      src: "/images/vererat-web.jpeg",
+      alt: {
+        sq: "Kamarieri mban një shishe verë të kuqe Taverna Li-Ro pranë tryezës",
+        en: "A waiter holds a bottle of Taverna Li-Ro red wine beside the table",
+      },
     },
     name: { sq: "Verë Liro", en: "Liro Wine" },
     description: {
