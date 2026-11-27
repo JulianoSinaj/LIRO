@@ -66,7 +66,7 @@ export const openingHours: { days: Localized; time: Localized }[] = [
   // TODO: Përditëso oraret reale. Mund të shtosh më shumë rreshta.
   {
     days: { sq: "E Mërkurë – E Hënë", en: "Wednesday – Monday" },
-    time: { sq: "12:00 – 23:30", en: "12:00 – 23:30" },
+    time: { sq: "12:00 – 22:00", en: "12:00 – 22:00" },
   },
   // E Marta është ditë pushimi.
   { days: { sq: "E Martë", en: "Tuesday" }, time: { sq: "Pushim", en: "Closed" } },
@@ -80,7 +80,7 @@ export const openingHours: { days: Localized; time: Localized }[] = [
 export const schedule = {
   timeZone: "Europe/Tirane",
   open: "12:00",
-  close: "23:30",
+  close: "22:00",
   closedDays: [2] as number[],
 };
 
@@ -527,11 +527,11 @@ export const signatureDishes: {
       /* Foto reale, versioni për web (1600px, ~280 KB). */
       src: "/images/peshku-web.jpeg",
       alt: {
-        sq: "Koçë e plotë në zgarë me limon, në pjatë në formë peshku",
+        sq: "Kocë e plotë në zgarë me limon, në pjatë në formë peshku",
         en: "Whole grilled sea bream with lemon on a fish-shaped platter",
       },
     },
-    name: { sq: "Koçë në Zgarë", en: "Grilled Sea Bream" },
+    name: { sq: "Kocë në Zgarë", en: "Grilled Sea Bream" },
     description: {
       sq: "Peshku i ditës nga bregu i Vlorës, me vaj ulliri dhe limon.",
       en: "The day's catch from the Vlorë coast, olive oil and lemon.",
@@ -587,7 +587,7 @@ export const content = {
     },
     // Maksimumi 12 fjalë.
     subtitle: {
-      sq: "Mish i zgjedhur, peshk i Jonit dhe verë, mes ullinjve të Panajës.",
+      sq: "Mish i zgjedhur, peshk i Jonit dhe verë, mes ullinjve të Panaja.",
       en: "Selected meats, Ionian fish and fine wine, among Panaja's olive trees.",
     },
     cta: { sq: "Rezervo një Tavolinë", en: "Reserve a Table" },
@@ -609,7 +609,7 @@ export const content = {
     eyebrow: { sq: "Thelbi", en: "The Essence" },
     title: { sq: "Tullë, dru *dhe zjarr*", en: "Brick, wood *and fire*" },
     text: {
-      sq: "Në Li-Ro gjithçka nis nga zgjedhja e lëndës. Mish i përzgjedhur me kujdes, peshku i freskët i detit Jon dhe produktet e stinës gatuhen thjesht, që shija të flasë vetë — mes mureve me tulla, drurit natyral dhe qetësisë së kopshtit me ullinj.",
+      sq: "Në Li-Ro gjithçka nis nga zgjedhja e lëndës. Mish i përzgjedhur me kujdes, peshku i freskët i detit Jon dhe produktet e stinës përgatiten thjesht, që shija të flasë vetë — mes mureve me tulla, drurit natyral dhe qetësisë së kopshtit me ullinj.",
       en: "At Li-Ro, everything begins with the choice of ingredients. Carefully selected meat, fresh fish from the Ionian Sea and seasonal produce are cooked simply, so the flavour speaks for itself — among brick walls, natural wood and the calm of the olive garden.",
     },
     values: [
@@ -650,9 +650,9 @@ export const content = {
 
   location: {
     eyebrow: { sq: "Vendndodhja", en: "Location" },
-    title: { sq: "Na gjeni në *Panajë*", en: "Find us in *Panaja*" },
+    title: { sq: "Na gjeni në *Panaja*", en: "Find us in *Panaja*" },
     text: {
-      sq: "Pak minuta nga qendra e Vlorës, mes ullinjve dhe qetësisë së Panajës.",
+      sq: "Pak minuta nga qendra e Vlorës, mes ullinjve dhe qetësisë së Panajas.",
       en: "A few minutes from the centre of Vlorë, among the olive trees and quiet of Panaja.",
     },
     addressLabel: { sq: "Adresa", en: "Address" },

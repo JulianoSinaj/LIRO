@@ -22,7 +22,7 @@ const rowVariants: Variants = {
 
 /** Lartësia e kartës ndjek përmbajtjen pa kërcime (susta "overdamped", pa lëkundje). */
 const HEIGHT_SPRING = { type: "spring", stiffness: 170, damping: 30, mass: 1 } as const;
-/** Vija e artë nën tab-in aktiv rrëshqet mes tab-eve. */
+/** Sfondi i artë i tab-it aktiv rrëshqet mes tab-eve. */
 const INDICATOR_SPRING = { type: "spring", stiffness: 380, damping: 34 } as const;
 
 /** Mat lartësinë e elementit sa herë ndryshon (ResizeObserver). */
@@ -129,13 +129,12 @@ export function Menu() {
               role="tablist"
               aria-label={t(m.categoriesLabel)}
               onKeyDown={onKeyDown}
-              className="mx-auto flex w-max items-center gap-x-4 sm:gap-x-6 lg:gap-x-8"
+              className="mx-auto flex w-max items-center gap-x-2 py-1 sm:gap-x-3"
             >
               {menuTabs.map((x, i) => {
                 const selected = x.id === active;
                 return (
                   <Fragment key={x.id}>
-                    {i > 0 && <span aria-hidden="true" className="size-[3px] rounded-full bg-gold/35" />}
                     <button
                       ref={(el) => {
                         tabRefs.current[i] = el;
@@ -148,18 +147,20 @@ export function Menu() {
                       tabIndex={selected ? 0 : -1}
                       onClick={() => select(i)}
                       className={cn(
-                        "relative py-2 font-display text-[1.1rem] whitespace-nowrap transition-colors duration-500 sm:text-lg",
-                        selected ? "text-gold" : "text-ivory/50 hover:text-ivory/85",
+                        "relative rounded-full border px-4 py-1.5 font-display text-[1.05rem] whitespace-nowrap transition-colors duration-500 active:scale-[0.96] sm:px-5 sm:text-lg",
+                        selected
+                          ? "border-gold text-ink"
+                          : "border-gold/30 bg-ivory/[0.03] text-ivory/75 hover:border-gold/60 hover:text-ivory",
                       )}
                     >
-                      {t(x.label)}
                       {selected && (
                         <motion.span
                           layoutId="menu-tab-indicator"
                           transition={INDICATOR_SPRING}
-                          className="absolute inset-x-0 bottom-0.5 mx-auto h-px w-6 bg-gold"
+                          className="absolute -inset-px -z-0 rounded-full bg-gold"
                         />
                       )}
+                      <span className="relative">{t(x.label)}</span>
                     </button>
                   </Fragment>
                 );

@@ -18,6 +18,47 @@ const getScrolled = () => window.scrollY > 40;
 const getScrolledServer = () => false;
 
 /**
+ * Scroll-spy: kthen id-në e seksionit që kalon vijën në 35% të lartësisë së ekranit.
+ * Kur jemi në Hero (para seksionit të parë) nuk ka asnjë aktiv.
+ */
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState<string | null>(null);
+  const key = ids.join("|");
+
+  useEffect(() => {
+    const list = key.split("|");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const line = window.innerHeight * 0.35;
+      let current: string | null = null;
+      for (const id of list) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= line) current = id;
+      }
+      /* fundi i faqes: seksioni i fundit bëhet aktiv edhe nëse s'arrin vijën */
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        current = list[list.length - 1] ?? current;
+      }
+      setActive(current);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [key]);
+
+  return active;
+}
+
+/**
  * Zgjedhësi i gjuhës — kontroll i segmentuar me kornizë, që të dallohet qartë
  * nga lidhjet e navigimit. Treguesi i gjuhës aktive rrëshqet me spring.
  */
@@ -70,6 +111,7 @@ export function Navbar() {
   const scrolled = useSyncExternalStore(subscribeScroll, getScrolled, getScrolledServer);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const active = useActiveSection(navLinks.map((l) => l.id));
 
   /* Menuja celulare: Escape mbyll, faqja pas saj bllokohet dhe bëhet "inert". */
   useEffect(() => {
@@ -133,21 +175,37 @@ export function Navbar() {
           {/* Lidhjet — desktop */}
           <nav aria-label="Primary" className="hidden xl:block">
             <ul className="flex items-center gap-9 2xl:gap-11">
-              {navLinks.map((link) => (
-                <li key={link.id}>
-                  <a
-                    href={`#${link.id}`}
-                    className="group relative block py-2 text-[11px] tracking-[0.25em] whitespace-nowrap text-ivory/70 uppercase transition-colors duration-300 hover:text-gold focus-visible:text-gold"
-                  >
-                    {t(link.label)}
-                    {/* vija e hover-it — `right` heq tracking-un pas shkronjës së fundit */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute right-[0.25em] bottom-0.5 left-0 h-px origin-center scale-x-0 bg-gold/70 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:scale-x-100 group-focus-visible:scale-x-100"
-                    />
-                  </a>
-                </li>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = active === link.id;
+                return (
+                  <li key={link.id}>
+                    <a
+                      href={`#${link.id}`}
+                      aria-current={isActive ? "location" : undefined}
+                      className={cn(
+                        "group relative block py-2 text-[11px] tracking-[0.25em] whitespace-nowrap uppercase transition-colors duration-300 hover:text-gold focus-visible:text-gold",
+                        isActive ? "text-gold" : "text-ivory/70",
+                      )}
+                    >
+                      {t(link.label)}
+                      {/* vija e hover-it — `right` heq tracking-un pas shkronjës së fundit */}
+                      <span
+                        aria-hidden="true"
+                        className="absolute right-[0.25em] bottom-0.5 left-0 h-px origin-center scale-x-0 bg-gold/70 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:scale-x-100 group-focus-visible:scale-x-100"
+                      />
+                      {/* vija e seksionit aktiv — rrëshqet me spring nga një lidhje te tjetra */}
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-active-underline"
+                          aria-hidden="true"
+                          className="absolute right-[0.25em] bottom-0.5 left-0 h-px bg-gold will-change-transform"
+                          transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                        />
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -210,7 +268,11 @@ export function Navbar() {
                     <a
                       href={`#${link.id}`}
                       onClick={close}
-                      className="block py-2 font-display text-5xl font-light text-ivory transition-colors hover:text-gold"
+                      aria-current={active === link.id ? "location" : undefined}
+                      className={cn(
+                        "block py-2 font-display text-5xl font-light underline-offset-8 transition-colors hover:text-gold",
+                        active === link.id ? "text-gold underline decoration-1" : "text-ivory",
+                      )}
                     >
                       {t(link.label)}
                     </a>

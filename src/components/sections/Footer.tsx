@@ -165,12 +165,18 @@ export function Footer() {
               style={magnet.style}
               {...magnet.handlers}
               whileTap={{ scale: 0.96 }}
-              className="group relative inline-block py-1 text-white/70 transition-colors duration-500 will-change-transform hover:text-gold"
+              className="group relative ml-1 inline-block cursor-pointer px-1 py-1 font-medium text-gold transition-colors duration-500 will-change-transform hover:text-white"
             >
               {CREDIT.name}
+              <span aria-hidden="true" className="ml-1 inline-block transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+              {/* Vija e gjatë: gjithmonë e dukshme, më e gjerë se emri */}
               <span
                 aria-hidden="true"
-                className="absolute inset-x-0 bottom-0.5 h-px origin-left scale-x-0 bg-gold transition-transform duration-500 ease-out group-hover:scale-x-100"
+                className="absolute -inset-x-3 bottom-0 h-px bg-gold/70"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute -inset-x-3 bottom-0 h-px origin-left scale-x-0 bg-white transition-transform duration-500 ease-out group-hover:scale-x-100"
               />
             </motion.a>
           </p>
